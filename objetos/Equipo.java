@@ -10,13 +10,10 @@ public class Equipo implements Comparable<Equipo>{
     private int golesEnContra;
 
 
-    public Equipo(String apellidoTecnico, String grupo, String pais, int puntosGanados, int golesAFavor, int golesEnContra){
+    public Equipo(String apellidoTecnico, String grupo, String pais){
         this.apellidoTecnico = apellidoTecnico;
         this.grupo = grupo;
         this.pais = pais;
-        this.puntosGanados = puntosGanados;
-        this.golesAFavor = golesAFavor;
-        this.golesEnContra = golesEnContra;
     }
 
     public Equipo(String pais){

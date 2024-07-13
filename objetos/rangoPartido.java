@@ -3,6 +3,7 @@ package objetos;
 public class rangoPartido {
     private int golesEq1;
     private int golesEq2;
+    private String nombreEstadio;
     private String ronda;
 
     /**
@@ -11,9 +12,10 @@ public class rangoPartido {
      * @param golesEq2 Los goles del equipo 2
      * @param ronda La ronda del partido
      */
-    public rangoPartido(int golesEq1, int golesEq2, String ronda){
+    public rangoPartido(String ronda, Ciudad ciudad, String nombreEstadio, int golesEq1, int golesEq2){
         this.golesEq1 = golesEq1;
         this.golesEq2 = golesEq2;
+        this.nombreEstadio = nombreEstadio;
         this.ronda = ronda;
     }
 
@@ -39,6 +41,22 @@ public class rangoPartido {
      */
     public String getRonda() {
         return ronda;
+    }
+
+    /**
+     * Metodo que retorna el nombre del estadio
+     * @return El nombre del estadio de tipo String
+     */
+    public String getNombreEstadio(){
+        return nombreEstadio;
+    }
+
+    /**
+     * Metodo que asigna los goles del equipo 1
+     * @param golesEq1 Los goles del equipo 1
+     */
+    public void setNombreEstadio(String nombreEstadio){
+        this.nombreEstadio = nombreEstadio;
     }
 
     /**

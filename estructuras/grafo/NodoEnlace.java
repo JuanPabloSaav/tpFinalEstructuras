@@ -3,10 +3,12 @@ package estructuras.grafo;
 public class NodoEnlace {
     private NodoVertice vertice;
     private NodoEnlace sigEnlace;
+    private Object etiqueta;
 
-    public NodoEnlace(NodoVertice vertice, NodoEnlace sigEnlace) {
+    public NodoEnlace(NodoVertice vertice, NodoEnlace sigEnlace, Object etiqueta) {
         this.vertice = vertice;
         this.sigEnlace = sigEnlace;
+        this.etiqueta = etiqueta;
     }
 
     public NodoVertice getVertice() {
@@ -23,6 +25,14 @@ public class NodoEnlace {
 
     public void setSigEnlace(NodoEnlace sigEnlace) {
         this.sigEnlace = sigEnlace;
+    }
+
+    public Object getEtiqueta() {
+        return etiqueta;
+    }
+
+    public void setEtiqueta(Object etiqueta) {
+        this.etiqueta = etiqueta;
     }
 
     @Override
