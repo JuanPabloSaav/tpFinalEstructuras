@@ -1,11 +1,11 @@
 package objetos;
 
-public class Rutas {
+public class Ruta {
     private int tiempoVuelo;
     private Ciudad ciudad1;
     private Ciudad ciudad2;
 
-    public Rutas(int tiempoVuelo, Ciudad ciudad1, Ciudad ciudad2){
+    public Ruta(int tiempoVuelo, Ciudad ciudad1, Ciudad ciudad2){
         this.tiempoVuelo = tiempoVuelo;
         this.ciudad1 = ciudad1;
         this.ciudad2 = ciudad2;

@@ -6,10 +6,13 @@ import estructuras.lineales.Lista;
 
 import objetos.Ciudad;
 import objetos.Equipo;
+import objetos.Ruta;
 import objetos.dominioPartido;
 import objetos.rangoPartido;
 import logSystem.Log;
 import menu.menuPartidos;
+import menu.menuEquipos;
+import menu.menuCiudades;
 
 import java.util.Scanner;
 import java.io.FileReader;
@@ -52,13 +55,13 @@ public class mainSystem{
             opcion = sc.nextInt();
             switch (opcion) {
                 case 1:
-                    
+                    menuCiudades.menu(ciudades);
                     break;
                 case 2:
-                        
+                    menuEquipos.menu(equipos);  
                     break;
                 case 3:
-            
+                    menuPartidos.menu(partidos, equipos);
                     break;
                 default:
                     break;
@@ -99,13 +102,13 @@ public class mainSystem{
                         break;
                     case "P":
                         Object[] tempPartido = {
-                            data[0].toLowerCase(), 
-                            data[1].toLowerCase(), 
-                            data[2].toLowerCase(), 
-                            data[3].toLowerCase(), 
-                            data[4].toLowerCase(), 
-                            Integer.parseInt(data[5]), 
-                            Integer.parseInt(data[6])
+                            data[0].toLowerCase(), //eq1
+                            data[1].toLowerCase(), //eq2
+                            data[2].toLowerCase(), //ronda
+                            data[3].toLowerCase(), //ciudad
+                            data[4].toLowerCase(), //estadio
+                            Integer.parseInt(data[5]),//eq1 goles
+                            Integer.parseInt(data[6])//eq2 goles
                         };
                         tempPartidos.poner(tempPartido);
                         break;
@@ -122,6 +125,8 @@ public class mainSystem{
                         break;
                 }
             }
+            inicializarPartidos(equipos, partidos, tempPartidos, ciudades);
+            inicializarRutas(tempRutas, ciudades);
             reader.close();
             
         } catch (Exception e) {
@@ -129,7 +134,20 @@ public class mainSystem{
         }
     }
 
-    private static void inicializarPartidos(Avl equipos, TablaHash partidos, Cola tempPartidos){
+    private static void inicializarRutas(Cola tempRutas, Grafo ciudades){
+        while (!tempRutas.esVacia()) {
+            Object[] tempRuta = (Object[]) tempRutas.obtenerFrente();
+            tempRutas.sacar();
+            Ciudad ciudad1 = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[0]));
+            Ciudad ciudad2 = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[1]));
+            if (ciudad1 != null && ciudad2 != null) {
+                Ruta aux = new Ruta(((int) tempRuta[2]), ciudad1, ciudad2);
+                ciudades.insertarArco(ciudad1, ciudad2, aux);
+            }
+        }
+    }
+
+    private static void inicializarPartidos(Avl equipos, TablaHash partidos, Cola tempPartidos, Grafo ciudades){
         while (!tempPartidos.esVacia()) {
             Object[] tempPartido = (Object[]) tempPartidos.obtenerFrente();
             tempPartidos.sacar();
@@ -142,12 +160,11 @@ public class mainSystem{
             }
             Equipo equipo1 = menuPartidos.buscarEquipo(eq1, equipos);
             Equipo equipo2 = menuPartidos.buscarEquipo(eq2, equipos);
-            Ciudad ciudad = 
+            Ciudad ciudad = menuCiudades.buscarCiudad(ciudades, ((String) tempPartido[3]));
             if (equipo1 != null && equipo2 != null) {
                 dominioPartido domPartido = new dominioPartido(equipo1, equipo2);
-                rangoPartido rango = new rangoPartido();
-                partidos.insertar();
-                
+                rangoPartido rango = new rangoPartido(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), ((int) tempPartido[5]),((int) tempPartido[6]));
+                partidos.asociar(domPartido, rango);
             }
         }
         
