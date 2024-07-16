@@ -165,4 +165,17 @@ public class TablaHash {
         }
         return numero;
     }
+
+    public Lista listar(){
+        Lista lista = new Lista();
+        for (int i = 0; i < tamaño; i++) {
+            NodoHashMapeo bucket = tabla[i];
+            while (bucket != null) {
+                Object[] datos = {bucket.getDominio(), bucket.getRango()};
+                lista.insertar(datos, lista.longitud()+1);
+                bucket = bucket.getEnlace();
+            }
+        }
+        return lista;
+    }
 }

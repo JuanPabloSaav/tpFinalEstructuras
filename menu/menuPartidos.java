@@ -3,15 +3,18 @@ package menu;
 import estructuras.conjuntistas.Avl;
 import estructuras.conjuntistas.TablaHash;
 import estructuras.lineales.Lista;
+import logSystem.Log;
+import estructuras.grafo.Grafo;
 import objetos.dominioPartido;
 import objetos.rangoPartido;
 import objetos.Equipo;
+import objetos.Ciudad;
 import java.util.Scanner;
 
 public class menuPartidos {
     private static Scanner sc = new Scanner(System.in);
 
-    public static void menu(TablaHash tablaPartidos, Avl arbolEquipos){
+    public static void menu(TablaHash tablaPartidos, Avl arbolEquipos, Grafo ciudades){
         int opcion = -1;
         do {
             System.out.println("Ingrese la opcion deseada");
@@ -26,7 +29,7 @@ public class menuPartidos {
             }
             switch (opcion) {
                 case 1:
-                    agregarPartido(tablaPartidos, arbolEquipos);
+                    agregarPartido(tablaPartidos, arbolEquipos, ciudades);
                     break;
             
                 case 2:
@@ -34,7 +37,7 @@ public class menuPartidos {
                     break;
 
                 case 3:
-                    //TODO: mostrar todos los partidos
+                    mostrarPartidos(tablaPartidos);
                     break;
                 default:
                     System.out.println("ingrese una opcion valida");
@@ -44,9 +47,9 @@ public class menuPartidos {
         sc.close();
     }
 
-    public static void agregarPartido(TablaHash tablaPartidos, Avl arbolEquipos){
+    public static void agregarPartido(TablaHash tablaPartidos, Avl arbolEquipos, Grafo ciudades){
         int golesEq1, golesEq2;
-        String ronda = "";
+        String ronda = "", estadio = "";
         Equipo eq2, eq1;
 
         do {
@@ -137,7 +140,34 @@ public class menuPartidos {
             eq2 = aux;
             
         }
-        tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(golesEq1, golesEq2, ronda));
+
+        System.out.println("Ingrese la ciudad donde se jugo el partido");
+        Ciudad ciudad = null;
+        do {
+            try {
+                String nombreCiudad = sc.nextLine();
+                if (nombreCiudad.equals("")) {
+                    System.out.println("Ingrese un nombre valido");
+                }else{
+                    ciudad = menuCiudades.buscarCiudad(ciudades, nombreCiudad);
+                }
+            } catch (Exception e) {
+                Log.write("Error al buscar la ciudad");
+            }
+        } while (ciudad == null);
+
+        System.out.println("Ingrese el nombre del estadio donde se jugo el partido");
+        do {
+            try {
+                estadio = sc.nextLine();
+                if (estadio.equals("")) {
+                    System.out.println("Ingrese un nombre valido");
+                }
+            } catch (Exception e) {
+                Log.write("Error al buscar el estadio");
+            }
+        } while (estadio.equals(""));
+        tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(ronda, ciudad, estadio,golesEq1, golesEq2));
     }
 
     public static Equipo buscarEquipo(String nombrePais, Avl arbolEquipos){
@@ -183,6 +213,22 @@ public class menuPartidos {
             }
         }else{
             System.out.println("No se encontraron partidos");
+        }
+    }
+
+    private static void mostrarPartidos(TablaHash tablaPartidos){
+        Lista lista = tablaPartidos.listar();
+        int longitud = lista.longitud();
+        for (int i = 1; i <= longitud; i++) {
+            Object[] datos = (Object[]) lista.recuperar(i);
+            dominioPartido dp = (dominioPartido) datos[0];
+            rangoPartido rp = (rangoPartido) datos[1];
+            System.out.println(dp.getEq1().getPais() + "vs" + dp.getEq2().getPais() + ": ");
+            System.out.println("Estadio: "+rp.getEstadio()
+            +"\nCiudad: "+rp.getCiudad().getNombre()
+            +"\nRonda: "+rp.getRonda() 
+            + "\nGoles "+dp.getEq1().getPais()+": "+rp.getGolesEq1()
+            +"\nGoles "+dp.getEq2().getPais()+": " +rp.getGolesEq2() + "\n");
         }
     }
 }

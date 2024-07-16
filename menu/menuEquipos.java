@@ -28,8 +28,11 @@ public class menuEquipos{
                     agregarEquipo(arbolEquipos);
                     break;
                 case 2:
-
-
+                    buscarEquipo(arbolEquipos);
+                    break;
+                case 3:
+                    buscarPorRango(arbolEquipos);
+                    break;
                 default:
                     System.out.println("ingrese una opcion valida");
                     break;
@@ -123,10 +126,10 @@ public class menuEquipos{
             }
         } while (golesEnContra < 0);
 
-        arbolEquipos.insertar(new Equipo(apellidoTecnico, grupo, pais, puntosGanados, golesAFavor, golesEnContra));
+        arbolEquipos.insertar(new Equipo(apellidoTecnico, grupo, pais));
     }
 
-    public static void buscarEquipo(Avl arbolEquipos){
+    private static void buscarEquipo(Avl arbolEquipos){
         String pais = "";
         do {
             try {
@@ -154,7 +157,7 @@ public class menuEquipos{
         "\nGoles en contra: " + equipo.getGolesEnContra());
     }
 
-    public static void buscarPorRango(Avl arbolEquipos){
+    private static void buscarPorRango(Avl arbolEquipos){
         String pais1, pais2;
         System.out.println("Ingrese el primer pais");
         do {

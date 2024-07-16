@@ -36,7 +36,7 @@ public class Ciudad {
     }
 
     public String toString(){
-        return "Nombre: " + this.nombre + "\nPais: " + this.pais + "\nAlojamiento disponible: " + this.alojamientoDisponible + "\nEs sede: " + this.esSede + "\n";
+        return "Nombre: " + this.nombre + "\nAlojamiento disponible: " + this.alojamientoDisponible + "\nEs sede: " + this.esSede + "\n";
     }
 
     @Override
