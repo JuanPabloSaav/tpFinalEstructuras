@@ -3,6 +3,12 @@ import java.util.Arrays;
 
 public class primos {
     
+    /**
+     * Metodo que devuelve un arreglo de booleanos con los numeros primos hasta n
+     * con una complejidad de O(n log log n)
+     * @param n limite de los numeros primos
+     * @return arreglo de booleanos con los numeros primos hasta n
+     */
     public static boolean[] cribaDeEratostenes(int n){
         boolean[] esPrimo = new boolean[n + 1];
         boolean exito = false;

@@ -1,4 +1,5 @@
 import estructuras.grafo.Grafo;
+import estructuras.grafo.NodoVertice;
 import estructuras.conjuntistas.Avl;
 import estructuras.conjuntistas.TablaHash;
 import estructuras.lineales.Cola;
@@ -6,7 +7,6 @@ import estructuras.lineales.Lista;
 
 import objetos.Ciudad;
 import objetos.Equipo;
-import objetos.Ruta;
 import objetos.dominioPartido;
 import objetos.rangoPartido;
 
@@ -42,7 +42,7 @@ public class mainSystem{
     private static void regEstructuras(Avl equipos, Grafo ciudades, TablaHash partidos){
         Log.write("Estructuras cargadas: ");
         Lista listaEquipos = equipos.listar();
-        Lista listaCiudades = ciudades.listarEnProfundidad();
+        Lista listaCiudades = ciudades.listarVertices();
         Lista listaPartidos = partidos.listar();
         Log.write("Equipos: ");
         int longitud = listaEquipos.longitud();
@@ -58,7 +58,8 @@ public class mainSystem{
         Log.write("Ciudades: ");
         longitud = listaCiudades.longitud();
         for (int i = 1; i <= longitud; i++) {
-            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(i);
+            NodoVertice nodo = (NodoVertice) listaCiudades.recuperar(i);
+            Ciudad ciudad = (Ciudad) nodo.getElem();
             Log.write(ciudad.getNombre() 
             + ": Alojamiento: "+ ciudad.getAlojamientoDisponible() 
             + " - Sede de Copa: "+ ciudad.getEsSede());
@@ -189,12 +190,10 @@ public class mainSystem{
             Object[] tempRuta = (Object[]) tempRutas.obtenerFrente();
             tempRutas.sacar();
             Log.write("Añadiendo Ruta: " + tempRuta[0] + " - " + tempRuta[1]);
-            Ciudad ciudad1 = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[0]));
-            Ciudad ciudad2 = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[1]));
-            if (ciudad1 != null && ciudad2 != null) {
-                Ruta aux = new Ruta(((int) tempRuta[2]), ciudad1, ciudad2);
-                ciudades.insertarArco(ciudad1, ciudad2, aux);
+            if (ciudades.insertarArco(tempRuta[0], tempRuta[1], tempRuta[2])) {
                 Log.write("Ruta añadida");
+            }else{
+                Log.write("Error al añadir ruta");
             }
         }
     }

@@ -5,10 +5,18 @@ import estructuras.lineales.Lista;
 public class Grafo {
     private NodoVertice inicio;
 
+    /**
+     * Constructor de la clase Grafo
+     */
     public Grafo() {
         this.inicio = null;
     }
 
+    /**
+     * Inserta un vertice en el grafo si no existe, si ya existe no lo inserta
+     * @param elem Elemento a insertar
+     * @return true si se inserto correctamente, false en caso contrario
+     */
     public boolean insertarVertice(Object elem) {
         boolean exito = false;
         if (inicio != null && !existeVertice(elem)) {
@@ -21,6 +29,11 @@ public class Grafo {
         return exito;
     }
 
+    /**
+     * Elimina un vertice del grafo si existe
+     * @param elem Elemento a eliminar
+     * @return true si se elimino correctamente, false en caso contrario
+     */
     public boolean eliminarVertice(Object elem){
         boolean exito = false;
         if (inicio != null) {
@@ -43,6 +56,13 @@ public class Grafo {
         return exito;
     }
 
+    /**
+     * Inserta un arco entre dos vertices si no existe, si ya existe no lo inserta
+     * @param origen Vertice de origen
+     * @param destino Vertice de destino
+     * @param etiqueta Etiqueta del arco
+     * @return true si se inserto correctamente, false en caso contrario
+     */
     public boolean insertarArco(Object origen, Object destino, Object etiqueta){
         boolean exito = false;
         if (inicio != null) {
@@ -59,18 +79,12 @@ public class Grafo {
         return exito;
     }
 
-    public boolean existeArco(Object origen, Object destino){
-        boolean existe = false;
-        if (inicio != null) {
-            NodoVertice nodoOrigen = buscarVertice(origen);
-            NodoVertice nodoDestino = buscarVertice(destino);
-            if (nodoOrigen != null && nodoDestino != null) {
-                existe = existeArco(nodoOrigen, nodoDestino);
-            }
-        }
-        return existe;
-    }
-
+    /**
+     * Verifica si existe un arco entre dos vertices
+     * @param origen
+     * @param destino
+     * @return
+     */
     private boolean existeArco(NodoVertice origen, NodoVertice destino){
         boolean existe = false;
         NodoEnlace aux = origen.getPrimerEnlace();
@@ -83,6 +97,12 @@ public class Grafo {
         return existe;
     }
 
+    /**
+     * Elimina un arco entre dos vertices
+     * @param origen Vertice origen
+     * @param destino Vertice destino
+     * @return true si se elimino correctamente, false en caso contrario
+     */
     public boolean eliminarArco(Object origen, Object destino){
         boolean exito = false;
         if (inicio != null) {
@@ -110,6 +130,11 @@ public class Grafo {
         return exito;
     }
 
+    /**
+     * Verifica si existe un vertice en el grafo
+     * @param elem Elemento a buscar
+     * @return true si existe, false en caso contrario
+     */
     public boolean existeVertice(Object elem){
         boolean existe = false;
         if (inicio != null && buscarVertice(elem) != null) {
@@ -118,6 +143,11 @@ public class Grafo {
         return existe;
     }
 
+    /**
+     * Busca un vertice en el grafo
+     * @param elem Elemento a buscar
+     * @return NodoVertice si lo encuentra, null en caso contrario
+     */
     private NodoVertice buscarVertice(Object elem){
         NodoVertice aux = inicio;
         while (aux != null) {
@@ -129,6 +159,12 @@ public class Grafo {
         return aux;
     }
 
+    /**
+     * Verifica si existe un arco entre dos vertices
+     * @param origen Vertice origen
+     * @param destino Vertice destino
+     * @return true si existe, false en caso contrario
+     */
     public boolean existeCamino(Object origen, Object destino){
         boolean existe = false;
         if (inicio != null) {
@@ -143,6 +179,13 @@ public class Grafo {
     }
 
     //TODO: probar
+    /**
+     * Verifica si existe un camino entre dos vertices
+     * @param nodo Vertice origen
+     * @param destino Vertice destino
+     * @param visitados Lista de vertices visitados
+     * @return true si existe, false en caso contrario
+     */
     private boolean existeCaminoAux(NodoVertice nodo, NodoVertice destino, Lista visitados){
         boolean existe = false;
         if (nodo != null && !nodoVisitado(nodo, visitados)) {
@@ -160,6 +203,12 @@ public class Grafo {
         return existe;
     }
 
+    /**
+     * Verifica si un nodo ya fue visitado
+     * @param nodo Vertice a verificar
+     * @param visitados Lista de vertices visitados
+     * @return true si ya fue visitado, false en caso contrario
+     */
     private boolean nodoVisitado(NodoVertice nodo, Lista visitados){
         boolean visitado = false;
         int longitud = visitados.longitud();
@@ -172,12 +221,26 @@ public class Grafo {
         return visitado;
     }
 
-    public Lista caminoMasCorto(NodoVertice nodo, NodoVertice destino){
+    /**
+     * Devuelve un camino entre dos vertices
+     * @param nodo Vertice origen
+     * @param destino Vertice destino
+     * @return Lista con el camino
+     */
+    public Lista caminoMasCorto(Object nodo, Object destino){
         Lista camino = new Lista();
-        camino = caminoMasCortoAux(nodo, destino);
+        NodoVertice nodoOrigen = buscarVertice(nodo);
+        NodoVertice nodoDestino = buscarVertice(destino);
+        camino = caminoMasCortoAux(nodoOrigen, nodoDestino);
         return camino;
     }
 
+    /**
+     * Devuelve un camino entre dos vertices
+     * @param nodo Vertice origen
+     * @param destino Vertice destino
+     * @return Lista con el camino
+     */
     private Lista caminoMasCortoAux(NodoVertice nodo, NodoVertice destino){
         Lista menorCamino = new Lista();
         if (nodo != null) {
@@ -186,7 +249,6 @@ public class Grafo {
             }else{
                 NodoEnlace aux = nodo.getPrimerEnlace();
                 Lista caminoRecuperado = new Lista();
-                menorCamino = new Lista();
                 while (aux != null) {
                     caminoRecuperado = caminoMasCortoAux(aux.getVertice(), destino);
                     if (caminoRecuperado.longitud() < menorCamino.longitud()) {
@@ -200,6 +262,10 @@ public class Grafo {
         return menorCamino;
     }
 
+    /**
+     * Lista los vertices del grafo en profundidad
+     * @return Lista con los vertices
+     */
     public Lista listarEnProfundidad(){
         Lista visitados = new Lista();
         Lista lista = new Lista();
@@ -209,6 +275,13 @@ public class Grafo {
         return lista;
     }
 
+    /**
+     * Lista los vertices del grafo en profundidad
+     * @param nodo Vertice origen
+     * @param visitados Lista de vertices visitados
+     * @param lista Lista con los vertices
+     * @return Lista con los vertices
+     */
     private Lista listarEnProfundidadAux(NodoVertice nodo, Lista visitados, Lista lista){
         if (nodo != null && !nodoVisitado(nodo, visitados)) {
             visitados.insertar(nodo, 1);
@@ -222,6 +295,10 @@ public class Grafo {
         return visitados;
     }
 
+    /**
+     * Lista los vertices del grafo en anchura
+     * @return Lista con los vertices
+     */
     public Lista listarEnAnchura(){
         Lista visitados = new Lista();
         Lista lista = new Lista();
@@ -231,6 +308,13 @@ public class Grafo {
         return lista;
     }
 
+    /**
+     * Lista los vertices del grafo en anchura
+     * @param nodo Vertice origen
+     * @param visitados Lista de vertices visitados
+     * @param lista Lista con los vertices
+     * @return Lista con los vertices
+     */
     private Lista listarEnAnchuraAux(NodoVertice nodo, Lista visitados, Lista lista){
         if (nodo != null && !nodoVisitado(nodo, visitados)) {
             visitados.insertar(nodo, 1);
@@ -248,5 +332,15 @@ public class Grafo {
             }
         }
         return visitados;
+    }
+
+    public Lista listarVertices(){
+        Lista lista = new Lista();
+        NodoVertice aux = inicio;
+        while (aux != null) {
+            lista.insertar(aux.getElem(), 1);
+            aux = aux.getSigVertice();
+        }
+        return lista;
     }
 }

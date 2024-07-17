@@ -16,7 +16,7 @@ public class menuEquipos{
             System.out.println("1. Agregar Equipo");
             System.out.println("2. Buscar Equipo");
             System.out.println("3. Buscar en rango");
-            System.out.println("3. Mostrar todos los equipos");
+            System.out.println("4. Mostrar todos los equipos");
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
