@@ -89,6 +89,7 @@ public class mainSystem{
                 System.out.println("1. Menu de Ciudades");
                 System.out.println("2. Menu de Equipos");
                 System.out.println("3. Menu de Partidos");
+                System.out.println("4. Mostrar todas las estructuras");
 
                 opcion = sc.nextInt();
                 switch (opcion) {
@@ -100,6 +101,9 @@ public class mainSystem{
                         break;
                     case 3:
                         menuPartidos.menu(partidos, equipos, ciudades);
+                        break;
+                    case 4:
+                        mostrarEstructuras(equipos, ciudades, partidos);
                         break;
                     default:
                         System.out.println("Opcion invalida, intente otra vez");
@@ -144,9 +148,9 @@ public class mainSystem{
                     case "C":
                         Log.write("Añadiendo Ciudad: " + data[0]);
                         Ciudad ciudad = new Ciudad(
-                            data[0],//nombre
-                            Boolean.parseBoolean(data[1].toLowerCase()),//alojamiento
-                            Boolean.parseBoolean(data[2].toLowerCase())//sedeDeCopa
+                            data[0].toLowerCase(),//nombre
+                            Boolean.parseBoolean(data[1]),//alojamiento
+                            Boolean.parseBoolean(data[2])//sedeDeCopa
                         );
                         ciudades.insertarVertice(ciudad);
                         Log.write("Ciudad añadida");
@@ -210,16 +214,74 @@ public class mainSystem{
                 eq1 = eq2;
                 eq2 = aux;
             }
-            Equipo equipo1 = menuPartidos.buscarEquipo(eq1, equipos);
-            Equipo equipo2 = menuPartidos.buscarEquipo(eq2, equipos);
+            Equipo equipo1 = menuEquipos.buscarEquipo(eq1, equipos);
+            Equipo equipo2 = menuEquipos.buscarEquipo(eq2, equipos);
             Ciudad ciudad = menuCiudades.buscarCiudad(ciudades, ((String) tempPartido[3]));
             if (equipo1 != null && equipo2 != null) {
+                int golesEq1 = (int) tempPartido[5];
+                int golesEq2 = (int) tempPartido[6];
+                equipo1.setGolesAFavor(golesEq1+equipo1.getGolesAFavor());
+                equipo1.setGolesEnContra(golesEq2+equipo1.getGolesEnContra());
+                equipo2.setGolesAFavor(golesEq2+equipo2.getGolesAFavor());
+                equipo2.setGolesEnContra(golesEq1+equipo2.getGolesEnContra());
+                
+                if (((String) tempPartido[2]).equals("grupo")) {
+                    if (golesEq1 > golesEq2) {
+                        equipo1.setPuntosGanados(3+equipo1.getPuntosGanados());
+                    }else if (golesEq1 < golesEq2) {
+                        equipo2.setPuntosGanados(3+equipo2.getPuntosGanados());
+                    }else{
+                        equipo1.setPuntosGanados(1+equipo1.getPuntosGanados());
+                        equipo2.setPuntosGanados(1+equipo2.getPuntosGanados());
+                    }
+                }
                 dominioPartido domPartido = new dominioPartido(equipo1, equipo2);
-                rangoPartido rango = new rangoPartido(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), ((int) tempPartido[5]),((int) tempPartido[6]));
+                rangoPartido rango = new rangoPartido(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
                 partidos.asociar(domPartido, rango);
                 Log.write("Partido añadido");
             }
         }
         
     }
+
+    private static void mostrarEstructuras(Avl equipos, Grafo ciudades, TablaHash partidos){
+        System.out.println("Equipos: ");
+        Lista listaEquipos = equipos.listar();
+        int longitud = listaEquipos.longitud();
+        for (int i = 1; i <= longitud; i++) {
+            Equipo equipo = (Equipo) listaEquipos.recuperar(i);
+            System.out.println(equipo.getPais() 
+            + ": Grupo: "+ equipo.getGrupo() 
+            + " - Tecnico: "+ equipo.getApellidoTecnico() 
+            + " - Goles a favor: " + Integer.toString(equipo.getGolesAFavor()) 
+            + " - Goles en contra: " + Integer.toString(equipo.getGolesEnContra())
+            + " - Puntos ganados: " + Integer.toString(equipo.getPuntosGanados()));
+        }
+        System.out.println("Ciudades: ");
+        Lista listaCiudades = ciudades.listarVertices();
+        longitud = listaCiudades.longitud();
+        for (int i = 1; i <= longitud; i++) {
+            NodoVertice nodo = (NodoVertice) listaCiudades.recuperar(i);
+            Ciudad ciudad = (Ciudad) nodo.getElem();
+            System.out.println(ciudad.getNombre() 
+            + ": Alojamiento: "+ ciudad.getAlojamientoDisponible() 
+            + " - Sede de Copa: "+ ciudad.getEsSede());
+        }
+
+        System.out.println("Partidos: ");
+        Lista listaPartidos = partidos.listar();
+        longitud = listaPartidos.longitud();
+        for (int i = 1; i <= longitud; i++) {
+            Object[] partido = (Object[]) listaPartidos.recuperar(i);
+            dominioPartido domPartido = (dominioPartido) partido[0];
+            rangoPartido rango = (rangoPartido) partido[1];
+            System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais()
+            + ": Ronda: "+ rango.getRonda()
+            + " - Ciudad: "+ rango.getCiudad().getNombre()
+            + " - Estadio: "+ rango.getNombreEstadio()
+            + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1())
+            + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
+        }
+    }
+
 }

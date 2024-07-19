@@ -60,51 +60,15 @@ public class menuCiudades {
 
     public static void agregarCiudad(Grafo ciudades){
         String nombre = "";
-        int opcion = -1;
         boolean alojamientoDisponible = false, esSede = false;
         Ciudad ciudad = null;
         try {
-            do {
-                System.out.println("Ingrese el nombre de la ciudad");
-                nombre = sc.nextLine();
-            } while (nombre.equals(""));
-
-            do {
-                System.out.println("¿Tiene alojamiento disponible?");
-                System.out.println("1. Sí");
-                System.out.println("2. No");
-                opcion = sc.nextInt();
-                switch (opcion) {
-                    case 1:
-                        alojamientoDisponible = true;
-                        break;
-                    case 2:
-                        alojamientoDisponible = false;
-                        break;
-                    default:
-                        System.out.println("Opción inválida, intenta de nuevo");
-                        break;
-                }
-            } while (opcion <= 0 || opcion > 2);
-
-            opcion = -1;
-            do {
-                System.out.println("¿Tiene alojamiento disponible?");
-                System.out.println("1. Sí");
-                System.out.println("2. No");
-                opcion = sc.nextInt();
-                switch (opcion) {
-                    case 1:
-                        esSede = true;
-                        break;
-                    case 2:
-                        esSede = false;
-                        break;
-                    default:
-                        System.out.println("Opción inválida, intenta de nuevo");
-                        break;
-                }
-            } while (opcion <= 0 || opcion > 2);
+            System.out.println("Ingrese el nombre de la ciudad");
+            nombre = solicitarCiudad();
+            System.out.println("¿Tiene alojamiento disponible?");
+            alojamientoDisponible = solicitarSiNo();
+            System.out.println("¿Es sede?");
+            esSede = solicitarSiNo();
 
             ciudad = new Ciudad(nombre, alojamientoDisponible, esSede);
             ciudades.insertarVertice(ciudad);
@@ -118,7 +82,7 @@ public class menuCiudades {
         Ciudad ciudad = null;
         try {
             System.out.println("Ingrese el nombre de la ciudad a eliminar");
-            nombre = sc.nextLine();
+            nombre = solicitarCiudad();
             ciudad = buscarCiudad(ciudades, nombre);
             if (ciudad != null) {
                 ciudades.eliminarVertice(ciudad);
@@ -135,7 +99,7 @@ public class menuCiudades {
         Ciudad ciudad = null;
         try {
             System.out.println("Ingrese el nombre de la ciudad a modificar");
-            nombre = sc.nextLine();
+            nombre = solicitarCiudad();
             ciudad = buscarCiudad(ciudades, nombre);
             if (ciudad == null) {
                 System.out.println("La ciudad no existe");
@@ -149,63 +113,21 @@ public class menuCiudades {
                     opcion = sc.nextInt();
                     switch (opcion) {
                         case 1:
+                            String nuevoNombre = "";
                             System.out.println("Ingrese el nuevo nombre de la ciudad");
-                            String nuevoNombre = sc.nextLine();
-                            if (nuevoNombre.equals("")) {
-                                System.out.println("Nombre inválido, intenta de nuevo");
-                            } else {
-                                ciudad.setNombre(nuevoNombre);    
-                            }
+                            nuevoNombre = solicitarCiudad();
+                            ciudad.setNombre(nuevoNombre);
                             break;
                         case 2:
                             opcion = -1;
-                            boolean alojamientoDisponible = false;
-                            do {
-                                System.out.println("¿Tiene alojamiento disponible?");
-                                System.out.println("1. Sí");
-                                System.out.println("2. No");
-                                System.out.println("3. Salir");
-                                opcion = sc.nextInt();
-                                switch (opcion) {
-                                    case 1:
-                                        alojamientoDisponible = true;
-                                        ciudad.setAlojamientoDisponible(alojamientoDisponible);
-                                        break;
-                                    case 2:
-                                        ciudad.setAlojamientoDisponible(alojamientoDisponible);
-                                        break;
-                                    case 3:
-                                        break;
-                                    default:
-                                        System.out.println("Opción inválida, intenta de nuevo");
-                                        break;
-                                }
-                            } while (opcion <= 0 || opcion > 2);
+                            System.out.println("¿Tiene alojamiento disponible?");
+                            boolean alojamientoDisponible = solicitarSiNo();
+                            ciudad.setAlojamientoDisponible(alojamientoDisponible);
                             break;
                         case 3:
-                            opcion = -1;
-                            boolean esSede = false;
-                            do {
-                                System.out.println("¿Es sede?");
-                                System.out.println("1. Sí");
-                                System.out.println("2. No");
-                                System.out.println("3. Salir");
-                                opcion = sc.nextInt();
-                                switch (opcion) {
-                                    case 1:
-                                        esSede = true;
-                                        ciudad.setEsSede(esSede);
-                                        break;
-                                    case 2:
-                                        ciudad.setEsSede(esSede);
-                                        break;
-                                    case 3:
-                                        break;
-                                    default:
-                                        System.out.println("Opción inválida, intenta de nuevo");
-                                        break;
-                                }
-                            } while (opcion <= 0 || opcion > 2);
+                            System.out.println("¿Es sede?");
+                            boolean esSede = solicitarSiNo();
+                            ciudad.setEsSede(esSede);
                             break;
                         default:
                             System.out.println("Opción inválida, intenta de nuevo");
@@ -225,11 +147,10 @@ public class menuCiudades {
         Ciudad ciudad = null;
         try {
             System.out.println("Ingrese el nombre de la ciudad a buscar");
-            nombre = sc.nextLine();
+            nombre = solicitarCiudad();
             ciudad = buscarCiudad(ciudades, nombre);
             if (ciudad != null) {
                 System.out.println("Nombre: " + ciudad.getNombre());
-                
                 System.out.println("Alojamiento disponible: " + (ciudad.getAlojamientoDisponible()? "Sí": "No"));
                 System.out.println("Es sede: " + (ciudad.getEsSede()? "Sí": "No"));
             } else {
@@ -271,13 +192,15 @@ public class menuCiudades {
         Lista camino = new Lista();
         do {
             System.out.println("Ingrese la ciudad de origen");
-            origen = buscarCiudad(ciudades, sc.nextLine());
+            String nombreOrigen = solicitarCiudad();
+            origen = buscarCiudad(ciudades, nombreOrigen);
             if (origen == null) {
                 System.out.println("La ciudad no existe");
                 break;
             }else{
                 System.out.println("Ingrese la ciudad de destino");
-                destino = buscarCiudad(ciudades, sc.nextLine());
+                String nombreDestino = solicitarCiudad();
+                destino = buscarCiudad(ciudades, nombreDestino);
                 if (destino == null) {
                     System.out.println("La ciudad no existe");
                     break;
@@ -308,10 +231,12 @@ public class menuCiudades {
         NodoVertice nodoOrigen = null;
         NodoVertice nodoDestino = null;
         if (longitud > 0 ) {
+
             System.out.println("Ingrese la ciudad de origen");
-            String origen = sc.nextLine();
+            String origen = solicitarCiudad();
             System.out.println("Ingrese la ciudad de destino");
-            String destino = sc.nextLine();
+            String destino = solicitarCiudad();
+
             for (int i = 1; i < longitud; i++) {
                 NodoVertice nodo = (NodoVertice) aux.recuperar(i);
                 Ciudad ciudad = (Ciudad) nodo.getElem();
@@ -322,10 +247,12 @@ public class menuCiudades {
                     nodoDestino = nodo;
                 }
             }
+
             if (nodoOrigen != null && nodoDestino != null) {
                 Object[] camino = buscarCaminoDeMenortiempoAux(nodoOrigen, nodoDestino);
                 Lista lista = (Lista) camino[0];
                 int tiempoTotal = (int) camino[1];
+
                 System.out.println("El camino de menor tiempo es:");
                 int longitudCamino = lista.longitud();
                 for (int i = 1; i < longitudCamino; i++) {
@@ -337,7 +264,9 @@ public class menuCiudades {
                 Ciudad ciudad = (Ciudad) nodoVertice.getElem();
                 System.out.println(ciudad.getNombre());
                 System.out.println("El tiempo total es: " + tiempoTotal);
+
             }else{
+                
                 if (nodoOrigen == null) {
                     System.out.println("La ciudad de origen no existe");
                 }
@@ -376,4 +305,45 @@ public class menuCiudades {
         }
         return camino;
     }
+
+    private static String solicitarCiudad(){
+        String nombre = "";
+        do {
+            nombre = sc.nextLine().toLowerCase();
+            if (nombre.equals("")) {
+                System.out.println("Ingrese una ciudad valida");
+            }
+        } while (nombre.equals(""));
+        return nombre;
+    }
+
+    private static boolean solicitarSiNo(){
+        int opcion = -1;
+        boolean respuesta = false;
+        try {
+            do {
+                System.out.println("1. Sí");
+                System.out.println("2. No");
+                opcion = sc.nextInt();
+                switch (opcion) {
+                    case 1:
+                        respuesta = true;
+                        break;
+                    case 2:
+                        respuesta = false;
+                        break;
+                    default:
+                        System.out.println("Opción inválida, intenta de nuevo");
+                        break;
+                }
+            } while (opcion <= 0 || opcion > 2);
+        } catch (Exception e) {
+            Log.write("ERROR:"+ e.getMessage());
+            System.out.println("Ocurrio un error, intentalo de nuevo");
+            opcion = -1;
+        }
+        return respuesta;
+    }
+
+
 }

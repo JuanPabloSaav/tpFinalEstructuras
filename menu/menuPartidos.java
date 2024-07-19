@@ -49,30 +49,18 @@ public class menuPartidos {
 
     public static void agregarPartido(TablaHash tablaPartidos, Avl arbolEquipos, Grafo ciudades){
         int golesEq1, golesEq2;
-        String ronda = "", estadio = "";
+        String ronda, estadio;
         Equipo eq2, eq1;
 
         do {
 
+            
             System.out.println("Ingrese el pais del primer equipo");
-            do {
-                eq1 = buscarEquipo(sc.nextLine().toLowerCase(), arbolEquipos);
-                if (eq1 == null) {
-                    System.out.println("Equipo no encontrado, intente de nuevo");
-                }
-                sc.nextLine();
-            } while (eq1 != null);
-
+            eq1 = solicitarEquipo(arbolEquipos);
             System.out.println("Ingrese el pais del segundo equipo");
-            do {
-                eq2 = buscarEquipo(sc.nextLine().toLowerCase(), arbolEquipos);
-                if (eq2 == null) {
-                    System.out.println("Equipo no encontrado, intente de nuevo");
-                }
-                sc.nextLine();
-            } while (eq2 != null);
+            eq2 = solicitarEquipo( arbolEquipos);
 
-            if (eq1 == null || eq2 == null || eq1.compareTo(eq2) == 0) {
+            if (eq1.compareTo(eq2) == 0) {
                 System.out.println("Un equipo no puede jugar contra si mismo, intente de nuevo");
                 eq1 = null;
                 eq2 = null;
@@ -81,59 +69,13 @@ public class menuPartidos {
         } while (eq1 == null || eq2 == null);
 
         System.out.println("Ingrese los goles del primer equipo");
-        do {
-            try {
-                golesEq1 = sc.nextInt();
-            } catch (Exception e) {
-                System.out.println("Ingrese un numero valido");
-                golesEq1 = -1;
-            }
-        } while (golesEq1 >= 0);
+        golesEq1 = solicitarGoles();
 
         System.out.println("Ingrese los goles del segundo equipo");
-        do {
-            try {
-                golesEq2 = sc.nextInt();
-            } catch (Exception e) {
-                System.out.println("Ingrese un numero valido");
-                golesEq2 = -1;
-            }
-        } while (golesEq2 >= 0);
+        golesEq2 = solicitarGoles();
 
         System.out.println("¿En que ronda se jugo el partido?");
-        int opcion = -1;
-        do {
-            System.out.println("1. Grupo");
-            System.out.println("2. Cuartos");
-            System.out.println("3. Semifinal");
-            System.out.println("4. Final");
-            try {
-                opcion = sc.nextInt();
-            } catch (Exception e) {
-                opcion = -1;
-            }
-            switch (opcion) {
-                case 1:
-                    ronda = "grupo";
-                    break;
-            
-                case 2:
-                    ronda = "cuartos";
-                    break;
-
-                case 3:
-                    ronda = "semifinal";
-                    break;
-                
-                case 4:
-                    ronda = "final";
-                    break;
-                
-                default:
-                    System.out.println("Ingrese una opcion valida");
-                    break;
-            }
-        } while (opcion != -1);
+        ronda = solicitarRonda();
         if (eq1.compareTo(eq2) > 0) {
             Equipo aux = eq1;
             eq1 = eq2;
@@ -142,52 +84,19 @@ public class menuPartidos {
         }
 
         System.out.println("Ingrese la ciudad donde se jugo el partido");
-        Ciudad ciudad = null;
-        do {
-            try {
-                String nombreCiudad = sc.nextLine();
-                if (nombreCiudad.equals("")) {
-                    System.out.println("Ingrese un nombre valido");
-                }else{
-                    ciudad = menuCiudades.buscarCiudad(ciudades, nombreCiudad);
-                }
-            } catch (Exception e) {
-                Log.write("Error al buscar la ciudad");
-            }
-        } while (ciudad == null);
+        Ciudad ciudad = solicitarCiudad(ciudades);
 
         System.out.println("Ingrese el nombre del estadio donde se jugo el partido");
-        do {
-            try {
-                estadio = sc.nextLine();
-                if (estadio.equals("")) {
-                    System.out.println("Ingrese un nombre valido");
-                }
-            } catch (Exception e) {
-                Log.write("Error al buscar el estadio");
-            }
-        } while (estadio.equals(""));
-        tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(ronda, ciudad, estadio,golesEq1, golesEq2));
-    }
-
-    public static Equipo buscarEquipo(String nombrePais, Avl arbolEquipos){
-        Lista lista = new Lista();
-        Equipo eq = null;
-
-        if (!nombrePais.equals("")) {
-            lista = arbolEquipos.listar();
-            int longitud = lista.longitud();
-            for (int i = 1; i <= longitud; i++) {
-                Equipo equipo = (Equipo) lista.recuperar(i);
-                if (equipo.getPais().equals(nombrePais)) {
-                    eq = equipo;
-                    break;
-                }
-            }
-
+        estadio = solicitarEstadio();
+        if (golesEq1 > golesEq2) {
+            eq1.setPuntosGanados(3+eq1.getPuntosGanados());
+        }else if (golesEq1 < golesEq2) {
+            eq2.setPuntosGanados(3+eq2.getPuntosGanados());
+        }else{
+            eq1.setPuntosGanados(1+eq1.getPuntosGanados());
+            eq2.setPuntosGanados(1+eq2.getPuntosGanados());
         }
-
-        return eq;
+        tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(ronda, ciudad, estadio,golesEq1, golesEq2));
     }
 
     public static void buscarPartido(TablaHash tablaPartidos){
@@ -230,5 +139,99 @@ public class menuPartidos {
             + "\nGoles "+dp.getEq1().getPais()+": "+rp.getGolesEq1()
             +"\nGoles "+dp.getEq2().getPais()+": " +rp.getGolesEq2() + "\n");
         }
+    }
+
+    private static Equipo solicitarEquipo(Avl equipos){
+        Equipo equipo = null;
+        do {
+            equipo = menuEquipos.buscarEquipo(sc.nextLine().toLowerCase(), equipos);
+            if (equipo == null) {
+                System.out.println("Equipo no encontrado, intente de nuevo");
+            }
+        } while (equipo == null);
+        return equipo;
+    }
+
+    private static int solicitarGoles(){
+        int goles;
+        do {
+            try {
+                goles = sc.nextInt();
+            } catch (Exception e) {
+                System.out.println("Ingrese un numero valido");
+                goles = -1;
+            }
+        } while (goles >= 0);
+        return goles;
+    }
+
+    private static String solicitarRonda(){
+        String ronda = "";
+        int opcion = -1;
+        do {
+            System.out.println("1. Grupo");
+            System.out.println("2. Cuartos");
+            System.out.println("3. Semifinal");
+            System.out.println("4. Final");
+            try {
+                opcion = sc.nextInt();
+            } catch (Exception e) {
+                opcion = -1;
+            }
+            switch (opcion) {
+                case 1:
+                    ronda = "grupo";
+                    break;
+            
+                case 2:
+                    ronda = "cuartos";
+                    break;
+
+                case 3:
+                    ronda = "semifinal";
+                    break;
+                
+                case 4:
+                    ronda = "final";
+                    break;
+                
+                default:
+                    System.out.println("Ingrese una opcion valida");
+                    break;
+            }
+        } while (opcion != -1);
+        return ronda;
+    }
+
+    private static Ciudad solicitarCiudad(Grafo ciudades){
+        Ciudad ciudad = null;
+        do {
+            try {
+                String nombreCiudad = sc.nextLine();
+                if (nombreCiudad.equals("")) {
+                    System.out.println("Ingrese un nombre valido");
+                }else{
+                    ciudad = menuCiudades.buscarCiudad(ciudades, nombreCiudad);
+                }
+            } catch (Exception e) {
+                Log.write("Error al buscar la ciudad");
+            }
+        } while (ciudad == null);
+        return ciudad;
+    }
+
+    private static String solicitarEstadio(){
+        String estadio = "";
+        do {
+            try {
+                estadio = sc.nextLine();
+                if (estadio.equals("")) {
+                    System.out.println("Ingrese un nombre valido");
+                }
+            } catch (Exception e) {
+                Log.write("Error al buscar el estadio");
+            }
+        } while (estadio.equals(""));
+        return estadio;
     }
 }
