@@ -28,6 +28,9 @@ public class menuCiudades {
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
                 if (opcion < 0) {
                     System.out.println("Opción inválida, intenta de nuevo");
                 }
@@ -66,7 +69,7 @@ public class menuCiudades {
                 default:
                     break;
             }
-        } while (opcion < 0);
+        } while (opcion > 0);
         sc.close();
     }
 
@@ -77,13 +80,19 @@ public class menuCiudades {
         try {
             System.out.println("Ingrese el nombre de la ciudad");
             nombre = solicitarCiudad();
-            System.out.println("¿Tiene alojamiento disponible?");
-            alojamientoDisponible = solicitarSiNo();
-            System.out.println("¿Es sede?");
-            esSede = solicitarSiNo();
+            ciudad = buscarCiudad(ciudades, nombre);
+            if (ciudad != null) {
+                System.out.println("La ciudad ya existe");
+            }else{
+                System.out.println("¿Tiene alojamiento disponible?");
+                alojamientoDisponible = solicitarSiNo();
+                System.out.println("¿Es sede?");
+                esSede = solicitarSiNo();
 
-            ciudad = new Ciudad(nombre, alojamientoDisponible, esSede);
-            ciudades.insertarVertice(ciudad);
+                ciudad = new Ciudad(nombre, alojamientoDisponible, esSede);
+                System.out.println((ciudades.insertarVertice(ciudad))?"La ciudad se agregó correctamente":"No se pudo agregar la ciudad");
+            }
+            
         } catch (Exception e) {
             Log.write("ERROR:"+ e.getMessage());
         }
@@ -97,7 +106,7 @@ public class menuCiudades {
             nombre = solicitarCiudad();
             ciudad = buscarCiudad(ciudades, nombre);
             if (ciudad != null) {
-                ciudades.eliminarVertice(ciudad);
+                System.out.println(ciudades.eliminarVertice(ciudad)?"La ciudad se eliminó correctamente":"No se pudo eliminar la ciudad");
             } else {
                 System.out.println("La ciudad no existe");
             }
@@ -387,6 +396,9 @@ public class menuCiudades {
                 System.out.println("1. Sí");
                 System.out.println("2. No");
                 opcion = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
                 switch (opcion) {
                     case 1:
                         respuesta = true;
@@ -412,6 +424,9 @@ public class menuCiudades {
         try {
             do {
                 tiempo = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
                 if (tiempo <= 0) {
                     System.out.println("El tiempo de viaje debe ser mayor a 0");
                 }

@@ -159,6 +159,8 @@ public class menuEquipos {
                         case 3:
                             String paisNuevo = solicitarPais();
                             equipo.setPais(paisNuevo);
+                            arbolEquipos.eliminar(equipo);
+                            arbolEquipos.insertar(equipo);
                             break;
                         case 4:
                             int puntosGanados = solicitarPuntosGanados();

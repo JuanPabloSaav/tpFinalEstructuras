@@ -22,6 +22,7 @@ public class Grafo {
         if (inicio != null && !existeVertice(elem)) {
             NodoVertice aux = new NodoVertice(null, inicio, elem);
             inicio = aux;
+            exito = true;
         }else{
             inicio = new NodoVertice(null, null, elem);
             exito = true;
@@ -256,7 +257,7 @@ public class Grafo {
                     }
                     aux.getSigEnlace();
                 }
-                menorCamino.insertar(nodo, 1);
+                menorCamino.insertar(nodo.getElem(), 1);
             }
         }
         return menorCamino;
