@@ -339,9 +339,44 @@ public class Grafo {
         Lista lista = new Lista();
         NodoVertice aux = inicio;
         while (aux != null) {
-            lista.insertar(aux, 1);
+            lista.insertar(aux.getElem(), 1);
             aux = aux.getSigVertice();
         }
         return lista;
+    }
+
+    public Lista caminoMenorTiempo(Object inicio, Object destino){
+        Object[] camino = new Object[2];
+        camino[0] = new Lista();// Se le asigna a camino una lista vacia para evitar un retorno null
+        NodoVertice nodoInicio = buscarVertice(inicio);
+        NodoVertice nodoDestino = buscarVertice(destino);
+        if (inicio != null && nodoInicio != null && nodoDestino != null) {
+            camino = buscarCaminoMenorTiempoAux(nodoInicio, nodoDestino);
+        }
+        return (Lista) camino[0];
+    }
+
+    private Object[] buscarCaminoMenorTiempoAux(NodoVertice nodo, NodoVertice destino){
+        Object[] camino = new Object[2];
+        camino[0] = new Lista();
+        camino[1] = 0;
+        if (inicio != null) {
+            if (inicio.equals(destino)) {
+                camino[0] = ((Lista) camino[0]).insertar(nodo.getElem(), 1);
+                camino[1] = camino[1];
+            }else{
+                NodoEnlace aux = nodo.getPrimerEnlace();
+                Object[] caminoRecuperado = new Object[2];
+                while (aux != null) {
+                    caminoRecuperado = buscarCaminoMenorTiempoAux(aux.getVertice(), destino);
+                    if (((int) caminoRecuperado[1]) < ((int) camino[1])) {
+                        camino[0] = caminoRecuperado[0];
+                        camino[1] = caminoRecuperado[1];
+                    }
+                    aux = aux.getSigEnlace();
+                }
+            }
+        }
+        return camino;
     }
 }

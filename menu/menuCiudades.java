@@ -3,8 +3,6 @@ package menu;
 import java.util.Scanner;
 
 import estructuras.grafo.Grafo;
-import estructuras.grafo.NodoEnlace;
-import estructuras.grafo.NodoVertice;
 import estructuras.lineales.Lista;
 import logSystem.Log;
 import objetos.Ciudad;
@@ -187,10 +185,9 @@ public class menuCiudades {
         Lista lista = ciudades.listarVertices();
         int longitud = lista.longitud();
         for (int i = 1; i <= longitud; i++) {
-            NodoVertice aux = (NodoVertice) lista.recuperar(i);
-            Ciudad ciudadAux = (Ciudad) aux.getElem();
-            if (ciudadAux.getNombre().equalsIgnoreCase(nombreCiudad)) {
-                ciudad = ciudadAux;
+            Ciudad aux = (Ciudad) lista.recuperar(i);
+            if (aux.getNombre().equalsIgnoreCase(nombreCiudad)) {
+                ciudad = aux;
                 break;
             }
         }
@@ -202,8 +199,7 @@ public class menuCiudades {
         Lista lista = ciudades.listarVertices();
         int longitud = lista.longitud();
         for (int i = 1; i <= longitud; i++) {
-            NodoVertice nodo = (NodoVertice) lista.recuperar(i);
-            Ciudad ciudad = (Ciudad) nodo.getElem();
+            Ciudad ciudad = (Ciudad) lista.recuperar(i);
             System.out.println(ciudad.getNombre());
         }
     }
@@ -234,12 +230,10 @@ public class menuCiudades {
         if (longitud > 0) {
             System.out.println("El camino más corto es:");
             for (int i = 1; i < longitud; i++) {
-                NodoVertice nodo = (NodoVertice) camino.recuperar(i);
-                Ciudad ciudad = (Ciudad) nodo.getElem();
+                Ciudad ciudad = (Ciudad) camino.recuperar(i);
                 System.out.println(ciudad.getNombre() + " -> ");
             }
-            NodoVertice nodo = (NodoVertice) camino.recuperar(longitud);
-            Ciudad ciudad = (Ciudad) nodo.getElem();
+            Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
             System.out.println(ciudad.getNombre());
         }else{
             System.out.println("No se encontró un camino");
@@ -247,84 +241,35 @@ public class menuCiudades {
     }
 
     private static void buscarCaminoDeMenortiempo(Grafo ciudades){
-        Lista aux = ciudades.listarVertices();
-        int longitud = aux.longitud();
-        NodoVertice nodoOrigen = null;
-        NodoVertice nodoDestino = null;
-        if (longitud > 0 ) {
-
-            System.out.println("Ingrese la ciudad de origen");
-            String origen = solicitarCiudad();
-            System.out.println("Ingrese la ciudad de destino");
-            String destino = solicitarCiudad();
-
-            for (int i = 1; i < longitud; i++) {
-                NodoVertice nodo = (NodoVertice) aux.recuperar(i);
-                Ciudad ciudad = (Ciudad) nodo.getElem();
-                if (ciudad.getNombre().equalsIgnoreCase(origen)) {
-                    nodoOrigen = nodo;
-                }
-                if (ciudad.getNombre().equalsIgnoreCase(destino)) {
-                    nodoDestino = nodo;
-                }
-            }
-
-            if (nodoOrigen != null && nodoDestino != null) {
-                Object[] camino = buscarCaminoDeMenortiempoAux(nodoOrigen, nodoDestino);
-                Lista lista = (Lista) camino[0];
-                int tiempoTotal = (int) camino[1];
-
+        System.out.println("Ingrese la ciudad de origen");
+        String nombreOrigen = solicitarCiudad();
+        System.out.println("Ingrese la ciudad de destino");
+        String nombreDestino = solicitarCiudad();
+        Ciudad origen = buscarCiudad(ciudades, nombreOrigen);
+        Ciudad destino = buscarCiudad(ciudades, nombreDestino);
+        if (origen != null && destino != null) {
+            Lista camino = ciudades.caminoMenorTiempo(origen, destino);
+            int longitud = camino.longitud();
+            if (longitud > 0) {
                 System.out.println("El camino de menor tiempo es:");
-                int longitudCamino = lista.longitud();
-                for (int i = 1; i < longitudCamino; i++) {
-                    NodoVertice nodoVertice = (NodoVertice) lista.recuperar(i);
-                    Ciudad ciudad = (Ciudad) nodoVertice.getElem();
+                for (int i = 1; i < longitud; i++) {
+                    Ciudad ciudad = (Ciudad) camino.recuperar(i);
                     System.out.println(ciudad.getNombre() + " -> ");
                 }
-                NodoVertice nodoVertice = (NodoVertice) lista.recuperar(longitudCamino);
-                Ciudad ciudad = (Ciudad) nodoVertice.getElem();
+                Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
                 System.out.println(ciudad.getNombre());
-                System.out.println("El tiempo total es: " + tiempoTotal);
-
             }else{
-                
-                if (nodoOrigen == null) {
-                    System.out.println("La ciudad de origen no existe");
-                }
-                if (nodoDestino == null) {
-                    System.out.println("La ciudad de destino no existe");
-                }
+                System.out.println("No se encontró un camino");
             }
             
         }else{
-            System.out.println("No hay ciudades registradas");
-        }
-    }
-
-
-    private static Object[] buscarCaminoDeMenortiempoAux(NodoVertice nodo, NodoVertice destino){
-        Object[] camino = new Object[2];
-        Lista lista = new Lista();
-        int tiempoTotal = 0;
-        camino[0] = lista;
-        camino[1] = tiempoTotal;
-        if (nodo != null) {
-            if (nodo.equals(destino)) {
-                ((Lista) camino[0]).insertar(nodo, 1);
-            }else{
-                NodoEnlace aux = nodo.getPrimerEnlace();
-                Object[] recuperado;
-                while (aux != null) {
-                    recuperado = buscarCaminoDeMenortiempoAux(aux.getVertice(), destino);
-                    recuperado[1] = ((int) recuperado[1]) + ((int) aux.getEtiqueta());
-                    if (((int) recuperado[1]) < ((int) camino[1])) {
-                        camino = recuperado;
-                    }
-                    aux.getSigEnlace();
-                }
+            if (origen == null) {
+                System.out.println("La ciudad de origen no existe");
+            }
+            if (destino == null) {
+                System.out.println("La ciudad de destino no existe");
             }
         }
-        return camino;
     }
 
     private static void agregarRuta(Grafo ciudades){

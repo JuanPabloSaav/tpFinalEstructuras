@@ -3,9 +3,9 @@ package estructuras.grafo;
 public class NodoEnlace {
     private NodoVertice vertice;
     private NodoEnlace sigEnlace;
-    private Object etiqueta;
+    private double etiqueta;
 
-    public NodoEnlace(NodoVertice vertice, NodoEnlace sigEnlace, Object etiqueta) {
+    public NodoEnlace(NodoVertice vertice, NodoEnlace sigEnlace, double etiqueta) {
         this.vertice = vertice;
         this.sigEnlace = sigEnlace;
         this.etiqueta = etiqueta;
@@ -27,11 +27,11 @@ public class NodoEnlace {
         this.sigEnlace = sigEnlace;
     }
 
-    public Object getEtiqueta() {
+    public double getEtiqueta() {
         return etiqueta;
     }
 
-    public void setEtiqueta(Object etiqueta) {
+    public void setEtiqueta(double etiqueta) {
         this.etiqueta = etiqueta;
     }
 
