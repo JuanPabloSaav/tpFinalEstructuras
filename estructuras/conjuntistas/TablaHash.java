@@ -21,9 +21,6 @@ public class TablaHash {
         boolean exito = false;
         NodoHashMapeo elemento = new NodoHashMapeo(dominio, rango, null);
         int pos = dominio.getClave() % primo;
-        System.out.println("tamaño: "+ tamaño);
-        System.out.println("elemnto: "+ elemento.toString() + " hash: "+ elemento.hashCode());
-        System.out.println("pos: "+ pos);
         NodoHashMapeo bucket = tabla[pos];
         if (bucket != null) {
             while (bucket.getEnlace() != null) {

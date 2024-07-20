@@ -19,6 +19,7 @@ import java.util.Scanner;
 import java.io.FileReader;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.BufferedReader;
 
@@ -26,7 +27,6 @@ public class mainSystem{
     private static Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
         System.out.println("Iniciando sistema...");
-        System.out.println("Inicializando sistema de registros...");
         Log.initialize();
         System.out.println("Iniciando estructuras...");
         Avl equipos = new Avl();
@@ -47,6 +47,7 @@ public class mainSystem{
         Log.write("Equipos: ");
         int longitud = listaEquipos.longitud();
         for (int i = 1; i <= longitud; i++) {
+            
             Equipo equipo = (Equipo) listaEquipos.recuperar(i);
             Log.write(equipo.getPais() 
             + ": Grupo: "+ equipo.getGrupo() 
@@ -90,6 +91,7 @@ public class mainSystem{
                 System.out.println("2. Menu de Equipos");
                 System.out.println("3. Menu de Partidos");
                 System.out.println("4. Mostrar todas las estructuras");
+                System.out.println("0. Salir");
 
                 opcion = sc.nextInt();
                 switch (opcion) {
@@ -104,6 +106,10 @@ public class mainSystem{
                         break;
                     case 4:
                         mostrarEstructuras(equipos, ciudades, partidos);
+                        break;
+                    case 0:
+                        System.out.println("Saliendo del sistema...");
+                        Log.write("Sistema cerrado");
                         break;
                     default:
                         System.out.println("Opcion invalida, intente otra vez");
@@ -123,6 +129,7 @@ public class mainSystem{
         try {
             Log.write("Iniciada carga de archivo");
             JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getDefaultDirectory());
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos de texto", "txt"));
             fileChooser.showOpenDialog(null);
             File file = fileChooser.getSelectedFile();
             Log.write("Archivo seleccionado: " + file.getName());
@@ -132,52 +139,70 @@ public class mainSystem{
             Cola tempRutas = new Cola();
             Log.write("Leyendo archivo");
             while ((line = reader.readLine()) != null) {
-                String[] typeData = line.split(":");
-                String[] data = typeData[1].split(";");
-                switch (typeData[0]) {
-                    case "E":
-                        Log.write("Añadiendo Equipo: " + data[0]);
-                        Equipo equipo = new Equipo(
-                            data[0].toLowerCase(),//Eq1
-                            data[1].toLowerCase(),//Eq2
-                            data[2].toLowerCase()//grupoInicial
-                        );
-                        equipos.insertar(equipo);
-                        Log.write("Equipo añadido");
-                        break;
-                    case "C":
-                        Log.write("Añadiendo Ciudad: " + data[0]);
-                        Ciudad ciudad = new Ciudad(
-                            data[0].toLowerCase(),//nombre
-                            Boolean.parseBoolean(data[1]),//alojamiento
-                            Boolean.parseBoolean(data[2])//sedeDeCopa
-                        );
-                        ciudades.insertarVertice(ciudad);
-                        Log.write("Ciudad añadida");
-                        break;
-                    case "P":
-                        Object[] tempPartido = {
-                            data[0].toLowerCase(), //eq1
-                            data[1].toLowerCase(), //eq2
-                            data[2].toLowerCase(), //ronda
-                            data[3].toLowerCase(), //ciudad
-                            data[4].toLowerCase(), //estadio
-                            Integer.parseInt(data[5]),//eq1 goles
-                            Integer.parseInt(data[6])//eq2 goles
-                        };
-                        tempPartidos.poner(tempPartido);
-                        break;
-                    case "R":
-                        Object[] tempRuta = {
-                            data[0].toLowerCase(),//ciudad1
-                            data[1].toLowerCase(),//ciudad2
-                            Integer.parseInt(data[2])//distancia
-                        };
-                        tempRutas.poner(tempRuta);
-                        break;
-                    default:
-                        Log.write("Linea invalida en el archivo");
-                        break;
+                if (!line.equals("")) {
+                    String[] typeData = line.split(":");
+                    String[] data = typeData[1].split(";");
+                    switch (typeData[0]) {
+                        case "E":
+                            Log.write("Añadiendo Equipo: " + data[0]);
+                            data[0] = data[0].replaceFirst("\\s+", "");
+                            data[1] = data[1].replaceFirst("\\s+", "");
+                            data[2] = data[2].replaceFirst("\\s+", "");
+                            Equipo equipo = new Equipo(
+                                data[1].toLowerCase(),//ApellidoTecnico
+                                data[2].toLowerCase(),//grupoInicial
+                                data[0].toLowerCase()//Pais
+                            );
+                            equipos.insertar(equipo);
+                            Log.write("Equipo añadido");
+                            break;
+                        case "C":
+                            Log.write("Añadiendo Ciudad: " + data[0]);
+                            data[0] = data[0].replaceFirst("\\s+", "");
+                            data[1] = data[1].replaceFirst("\\s+", "");
+                            data[2] = data[2].replaceFirst("\\s+", "");
+                            Ciudad ciudad = new Ciudad(
+                                data[0].toLowerCase(),//nombre
+                                Boolean.parseBoolean(data[1]),//alojamiento
+                                Boolean.parseBoolean(data[2])//sedeDeCopa
+                            );
+                            ciudades.insertarVertice(ciudad);
+                            Log.write("Ciudad añadida");
+                            break;
+                        case "P":
+                            data[0] = data[0].replaceFirst("\\s+", "");
+                            data[1] = data[1].replaceFirst("\\s+", "");
+                            data[2] = data[2].replaceFirst("\\s+", "");
+                            data[3] = data[3].replaceFirst("\\s+", "");
+                            data[4] = data[4].replaceFirst("\\s+", "");
+                            data[5] = data[5].replaceFirst("\\s+", "");
+                            data[6] = data[6].replaceFirst("\\s+", "");
+                            Object[] tempPartido = {
+                                data[0].toLowerCase(), //eq1
+                                data[1].toLowerCase(), //eq2
+                                data[2].toLowerCase(), //ronda
+                                data[3].toLowerCase(), //ciudad
+                                data[4].toLowerCase(), //estadio
+                                Integer.parseInt(data[5]),//eq1 goles
+                                Integer.parseInt(data[6])//eq2 goles
+                            };
+                            tempPartidos.poner(tempPartido);
+                            break;
+                        case "R":
+                            data[0] = data[0].replaceFirst("\\s+", "");
+                            data[1] = data[1].replaceFirst("\\s+", "");
+                            data[2] = data[2].replaceFirst("\\s+", "");
+                            Object[] tempRuta = {
+                                data[0].toLowerCase(),//ciudad1
+                                data[1].toLowerCase(),//ciudad2
+                                Integer.parseInt(data[2])//distancia
+                            };
+                            tempRutas.poner(tempRuta);
+                            break;
+                        default:
+                            Log.write("Linea invalida en el archivo");
+                            break;
+                    }
                 }
             }
             inicializarPartidos(equipos, partidos, tempPartidos, ciudades);

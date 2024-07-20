@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import javax.swing.filechooser.FileSystemView;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Log {
@@ -30,11 +30,16 @@ public class Log {
         try {
             System.out.println("Buscando carpeta de documentos...");
             path = documentsPath();
+            LocalDateTime date = LocalDateTime.now();
             DateTimeFormatter fileDateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
-            LocalDate date = LocalDate.now();
+            
             System.out.println("Creando archivo de registro...");
-            path += "/CopaAmericaLog/" + date.format(fileDateFormat) + ".txt";
+            String dateFormat = date.format(fileDateFormat);
+            path += "/CopaAmericaLog/" + dateFormat + ".txt";
             file = new File(path);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
             created = file.createNewFile();
             writer = new BufferedWriter(new FileWriter(file, true));
         } catch (Exception e) {

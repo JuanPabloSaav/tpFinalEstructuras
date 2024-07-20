@@ -338,7 +338,7 @@ public class Grafo {
         Lista lista = new Lista();
         NodoVertice aux = inicio;
         while (aux != null) {
-            lista.insertar(aux.getElem(), 1);
+            lista.insertar(aux, 1);
             aux = aux.getSigVertice();
         }
         return lista;
