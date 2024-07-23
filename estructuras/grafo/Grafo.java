@@ -64,15 +64,36 @@ public class Grafo {
      * @param etiqueta Etiqueta del arco
      * @return true si se inserto correctamente, false en caso contrario
      */
-    public boolean insertarArco(Object origen, Object destino, Object etiqueta){
+    public boolean insertarArco(Object origen, Object destino, double etiqueta){
         boolean exito = false;
         if (inicio != null) {
             NodoVertice nodoOrigen = buscarVertice(origen);
             NodoVertice nodoDestino = buscarVertice(destino);
             if (nodoOrigen != null && nodoDestino != null) {
                 if (!existeArco(nodoOrigen, nodoDestino)) {
-                    nodoOrigen.setPrimerEnlace(new NodoEnlace(nodoDestino, nodoOrigen.getPrimerEnlace(), etiqueta));
-                    nodoDestino.setPrimerEnlace(new NodoEnlace(nodoOrigen, nodoDestino.getPrimerEnlace(), etiqueta));
+                    NodoEnlace aux = nodoOrigen.getPrimerEnlace();
+                    NodoEnlace anterior = null;
+                    while (aux != null) {
+                        anterior = aux;
+                        aux = aux.getSigEnlace();
+                    }
+                    if (anterior == null) {
+                        nodoOrigen.setPrimerEnlace(new NodoEnlace(nodoDestino, null, etiqueta));
+                    }else{
+                        anterior.setSigEnlace(new NodoEnlace(nodoDestino, null, etiqueta));
+                    }
+                    
+                    aux = nodoDestino.getPrimerEnlace();
+                    anterior = null;
+                    while (aux != null) {
+                        anterior = aux;
+                        aux = aux.getSigEnlace();
+                    }
+                    if (anterior == null) {
+                        nodoDestino.setPrimerEnlace(new NodoEnlace(nodoOrigen, null, etiqueta));
+                    }else{
+                        anterior.setSigEnlace(new NodoEnlace(nodoOrigen, null, etiqueta));
+                    }
                     exito = true;
                 }
             }
@@ -81,10 +102,11 @@ public class Grafo {
     }
 
     /**
-     * Verifica si existe un arco entre dos vertices
-     * @param origen
-     * @param destino
-     * @return
+     * Verifica si existe un arco entre dos vertices (solo si existe uno entre esos dos, 
+     * no verifica si hay un camino)
+     * @param origen Vertice origen
+     * @param destino Vertice destino
+     * @return true si existe, false en caso contrario
      */
     private boolean existeArco(NodoVertice origen, NodoVertice destino){
         boolean existe = false;
@@ -232,7 +254,10 @@ public class Grafo {
         Lista camino = new Lista();
         NodoVertice nodoOrigen = buscarVertice(nodo);
         NodoVertice nodoDestino = buscarVertice(destino);
-        camino = caminoMasCortoAux(nodoOrigen, nodoDestino);
+        Lista visitados = new Lista();
+        if (inicio != null && (nodoOrigen != null && nodoDestino != null)) {
+            camino = caminoMasCortoAux(nodoOrigen, nodoDestino, visitados);
+        }
         return camino;
     }
 
@@ -242,23 +267,29 @@ public class Grafo {
      * @param destino Vertice destino
      * @return Lista con el camino
      */
-    private Lista caminoMasCortoAux(NodoVertice nodo, NodoVertice destino){
+    private Lista caminoMasCortoAux(NodoVertice nodo, NodoVertice destino, Lista visitados){
         Lista menorCamino = new Lista();
-        if (nodo != null) {
+        if (nodo != null && !nodoVisitado(nodo, visitados)) {
+            visitados.insertar(nodo, visitados.longitud() + 1);
             if (nodo.equals(destino)) {
-                menorCamino.insertar(nodo, 1);
+                menorCamino.insertar(nodo.getElem(), 1);
             }else{
                 NodoEnlace aux = nodo.getPrimerEnlace();
                 Lista caminoRecuperado = new Lista();
                 while (aux != null) {
-                    caminoRecuperado = caminoMasCortoAux(aux.getVertice(), destino);
-                    if (caminoRecuperado.longitud() < menorCamino.longitud()) {
-                        menorCamino = caminoRecuperado;
+                    caminoRecuperado = caminoMasCortoAux(aux.getVertice(), destino, visitados);
+                    if (!caminoRecuperado.esVacia()) {
+                        if (menorCamino.esVacia() || caminoRecuperado.longitud() < menorCamino.longitud()) {
+                            menorCamino = caminoRecuperado;
+                        }
                     }
-                    aux.getSigEnlace();
+                    aux = aux.getSigEnlace();
                 }
-                menorCamino.insertar(nodo.getElem(), 1);
+                if (!menorCamino.esVacia()) {
+                    menorCamino.insertar(nodo.getElem(), 1);
+                }
             }
+            visitados.eliminar(visitados.longitud());
         }
         return menorCamino;
     }
@@ -345,37 +376,72 @@ public class Grafo {
         return lista;
     }
 
+    /**
+     * Devuelve el camino con menor tiempo entre dos vertices
+     * @param inicio Vertice de inicio
+     * @param destino Vertice de destino
+     * @return Lista con el camino de menor tiempo, si no existe retorna una lista vacia
+     */
+
     public Lista caminoMenorTiempo(Object inicio, Object destino){
         Object[] camino = new Object[2];
         camino[0] = new Lista();// Se le asigna a camino una lista vacia para evitar un retorno null
+        Lista visitados = new Lista();
+        // Se busca el nodo de inicio y destino
         NodoVertice nodoInicio = buscarVertice(inicio);
         NodoVertice nodoDestino = buscarVertice(destino);
         if (inicio != null && nodoInicio != null && nodoDestino != null) {
-            camino = buscarCaminoMenorTiempoAux(nodoInicio, nodoDestino);
+            camino = buscarCaminoMenorTiempoAux(nodoInicio, nodoDestino, visitados);
         }
+        // Se retorna el camino (podria quedar bien mostrar el tiempo pero no se si es necesario)
         return (Lista) camino[0];
     }
 
-    private Object[] buscarCaminoMenorTiempoAux(NodoVertice nodo, NodoVertice destino){
+    /*
+     * Metodo auxiliar para buscar el camino con menor tiempo entre dos vertices
+     * Este metodo usa recursividad para buscar el camino con menor tiempo
+     * comenzando desde el vertice de inicio, recorre hasta el vertice destino y desde ahi comienza a agregar
+     * los vertices al camino, lo retorna y prueba con el siguiente vertice asociado al vertice de inicio en busca
+     * de un camino mas corto, si el metodo devuelve una lista con un tiempo menor esta sobreescribe la anterior.
+     */
+    private Object[] buscarCaminoMenorTiempoAux(NodoVertice nodo, NodoVertice destino, Lista visitados){
+        // Se crea un arreglo de dos posiciones, la primera es una lista que contendra el camino y la segunda el tiempo
         Object[] camino = new Object[2];
         camino[0] = new Lista();
-        camino[1] = 0;
-        if (inicio != null) {
-            if (inicio.equals(destino)) {
-                camino[0] = ((Lista) camino[0]).insertar(nodo.getElem(), 1);
-                camino[1] = camino[1];
+        camino[1] = 0.0;
+        if (nodo != null && !nodoVisitado(nodo, visitados)) {
+            visitados.insertar(nodo, visitados.longitud() + 1);
+            // Si el nodo es igual al destino se agrega a la lista camino y se retorna
+            if (nodo.equals(destino)) {
+                ((Lista) camino[0]).insertar(nodo.getElem(), 1);
             }else{
                 NodoEnlace aux = nodo.getPrimerEnlace();
                 Object[] caminoRecuperado = new Object[2];
+                caminoRecuperado[0] = new Lista();
+                caminoRecuperado[1] = 0.0;
+                // Este while busca entre todos los vertices asociados al vertice actual el camino mas corto
                 while (aux != null) {
-                    caminoRecuperado = buscarCaminoMenorTiempoAux(aux.getVertice(), destino);
-                    if (((int) caminoRecuperado[1]) < ((int) camino[1])) {
-                        camino[0] = caminoRecuperado[0];
-                        camino[1] = caminoRecuperado[1];
+                    // Se usa el vertice asociado al inicio para buscar el camino mas corto
+                    caminoRecuperado = buscarCaminoMenorTiempoAux(aux.getVertice(), destino, visitados);
+                    Lista temp = (Lista) caminoRecuperado[0];
+                    // Si el camino recuperado no es vacio se le suma el tiempo del arco actual
+                    if (!temp.esVacia()){
+                        (caminoRecuperado[1]) = ((double) caminoRecuperado[1]) + aux.getEtiqueta();
+                        // Si el camino actual es vacio o el tiempo del camino recuperado es menor se sobreescribe
+                        if (((Lista) camino[0]).esVacia() || (((double) caminoRecuperado[1]) <= ((double) camino[1]))) {
+                            camino[0] = caminoRecuperado[0];
+                            camino[1] = caminoRecuperado[1];
+                        }
                     }
                     aux = aux.getSigEnlace();
                 }
+                // Si el camino actual no es vacio se agrega el vertice actual al camino
+                if (!((Lista) camino[0]).esVacia()) {
+                    ((Lista) camino[0]).insertar(nodo.getElem(), 1);
+                }
             }
+            // Se elimina el vertice actual de la lista de visitados por si se quiere buscar otro camino que contenga este vertice
+            visitados.eliminar(visitados.longitud());
         }
         return camino;
     }

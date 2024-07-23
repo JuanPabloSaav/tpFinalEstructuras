@@ -59,8 +59,7 @@ public class mainSystem{
         Log.write("Ciudades: ");
         longitud = listaCiudades.longitud();
         for (int i = 1; i <= longitud; i++) {
-            NodoVertice nodo = (NodoVertice) listaCiudades.recuperar(i);
-            Ciudad ciudad = (Ciudad) nodo.getElem();
+            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(i);
             Log.write(ciudad.getNombre() 
             + ": Alojamiento: "+ ciudad.getAlojamientoDisponible() 
             + " - Sede de Copa: "+ ciudad.getEsSede());
@@ -195,7 +194,7 @@ public class mainSystem{
                             Object[] tempRuta = {
                                 data[0].toLowerCase(),//ciudad1
                                 data[1].toLowerCase(),//ciudad2
-                                Integer.parseInt(data[2])//distancia
+                                Double.parseDouble(data[2])//tiempo
                             };
                             tempRutas.poner(tempRuta);
                             break;
@@ -219,7 +218,10 @@ public class mainSystem{
             Object[] tempRuta = (Object[]) tempRutas.obtenerFrente();
             tempRutas.sacar();
             Log.write("Añadiendo Ruta: " + tempRuta[0] + " - " + tempRuta[1]);
-            if (ciudades.insertarArco(tempRuta[0], tempRuta[1], tempRuta[2])) {
+            Ciudad origen = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[0]));
+            Ciudad destino = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[1]));
+            if (ciudades.insertarArco(origen, destino, ((double) tempRuta[2]))) {
+                
                 Log.write("Ruta añadida");
             }else{
                 Log.write("Error al añadir ruta");

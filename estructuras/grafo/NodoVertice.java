@@ -36,8 +36,12 @@ public class NodoVertice {
         this.sigVertice = sigVertice;
     }
 
+    public boolean equals(NodoVertice obj) {
+        return elem.equals(obj.getElem());
+    }
+
     @Override
     public String toString() {
-        return "NodoVertice{" + "elem=" + elem + ", primerEnlace=" + primerEnlace + ", sigVertice=" + sigVertice + '}';
+        return elem.toString();
     }
 }

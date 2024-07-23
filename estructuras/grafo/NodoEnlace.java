@@ -37,6 +37,6 @@ public class NodoEnlace {
 
     @Override
     public String toString() {
-        return "NodoEnlace{" + "vertice=" + vertice + ", sigEnlace=" + sigEnlace + '}';
+        return vertice.toString() + " (" + etiqueta + ")";
     }
 }

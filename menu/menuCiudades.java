@@ -14,18 +14,26 @@ public class menuCiudades {
     public static void menu(Grafo ciudades){
         int opcion = -1;
         do {
+            //TODO: podrias arreglar un poco los numeros de las opciones, no se, ponerlos en orden o algo asi para que no parezca que los has puesto al azar 
+            //(esto me lo tiro el copilot wtf) ah ahora no dice nada, que raro (esto tambien me lo tiro el copilot)
+            //TODO: borrar este comentario cuando se haya hecho lo anterior NO TE OLVIDES (esto tambien me lo tiro el copilot)
+            // pero pedile un metodo para buscar una ciudad en el menor tiempo y te tira una falopeada
+            // yo personalmente me quedaba con el algoritmo de dijkstra, pero bueno, cada loco con su tema (que tiraba el copilot wtf "cada loco con su tema" ful)
             System.out.println("1. Agregar ciudad");
             System.out.println("2. Eliminar ciudad");
             System.out.println("3. Modificar ciudad");
-            System.out.println("4. Listar ciudades");
+            System.out.println("4. Buscar ciudad");
             System.out.println("5. Mostras ruta de menor tiempo de viaje");
             System.out.println("6. Mostrar camino que pase por menos ciudades");
             System.out.println("7. Agregar ruta");
             System.out.println("8. Eliminar ruta");
             System.out.println("9. Modificar ruta");
+            System.out.println("10. Listar ciudades");
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
+                // Nota: tener cuidado porque parece que hasNextLine() a veces espera un enter cuando no hay nada en el buffer
+                // tiene sentido? no, pero es lo que parece
                 if (sc.hasNextLine()) {
                     sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
                 }
@@ -33,7 +41,7 @@ public class menuCiudades {
                     System.out.println("Opción inválida, intenta de nuevo");
                 }
             } catch (Exception e) {
-                System.out.println("Opción inválida, intenta de nuevo");
+                Log.write("ERROR:"+ e.getMessage());
                 opcion = -1;
             }
             switch (opcion) {
@@ -47,7 +55,7 @@ public class menuCiudades {
                     modificarCiudad(ciudades);
                     break;
                 case 4:
-                    solicitarCiudad(ciudades);
+                    buscarCiudad(ciudades);
                     break;
                 case 5:
                     buscarCaminoDeMenortiempo(ciudades);
@@ -63,6 +71,9 @@ public class menuCiudades {
                     break;
                 case 9:
                     modificarRuta(ciudades);
+                    break;
+                case 10: 
+                    listarCiudades(ciudades);
                     break;
                 default:
                     break;
@@ -92,6 +103,7 @@ public class menuCiudades {
             }
             
         } catch (Exception e) {
+            System.out.println("Ocurrio un error, intentelo de nuevo");
             Log.write("ERROR:"+ e.getMessage());
         }
     }
@@ -109,7 +121,7 @@ public class menuCiudades {
                 System.out.println("La ciudad no existe");
             }
         } catch (Exception e) {
-            Log.write("ERROR:"+ e.getMessage());
+            Log.write("ERROR:"+ e.getMessage() + " " + e.getStackTrace());
         }
     }
 
@@ -157,11 +169,11 @@ public class menuCiudades {
             }
         } catch (Exception e) {
             System.out.println("Ocurrio un error, intentelo de nuevo");
-            Log.write("ERROR:"+ e.getMessage());
+            Log.write("ERROR:"+ e.getMessage() + " " + e.getStackTrace());
         }
     }
 
-    private static void solicitarCiudad(Grafo ciudades){
+    private static void buscarCiudad(Grafo ciudades){
         String nombre = "";
         Ciudad ciudad = null;
         try {
@@ -176,6 +188,7 @@ public class menuCiudades {
                 System.out.println("La ciudad no existe");
             }
         } catch (Exception e) {
+            System.out.println("Ocurrio un error, intentelo de nuevo");
             Log.write("ERROR:"+ e.getMessage());
         }
     }
@@ -231,7 +244,7 @@ public class menuCiudades {
             System.out.println("El camino más corto es:");
             for (int i = 1; i < longitud; i++) {
                 Ciudad ciudad = (Ciudad) camino.recuperar(i);
-                System.out.println(ciudad.getNombre() + " -> ");
+                System.out.print(ciudad.getNombre() + " -> ");
             }
             Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
             System.out.println(ciudad.getNombre());
@@ -254,7 +267,7 @@ public class menuCiudades {
                 System.out.println("El camino de menor tiempo es:");
                 for (int i = 1; i < longitud; i++) {
                     Ciudad ciudad = (Ciudad) camino.recuperar(i);
-                    System.out.println(ciudad.getNombre() + " -> ");
+                    System.out.print(ciudad.getNombre() + " -> ");
                 }
                 Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
                 System.out.println(ciudad.getNombre());
@@ -282,25 +295,42 @@ public class menuCiudades {
         ciudadDestino = buscarCiudad(ciudades, nombreDestino);
         if (ciudadOrigen != null && ciudadDestino != null) {
             System.out.println("Ingrese el tiempo de viaje");
-            int tiempo = solicitarTiempo();
-            ciudades.insertarArco(ciudadOrigen, ciudadDestino, tiempo);
+            double tiempo = solicitarTiempo();
+            System.out.println(ciudades.insertarArco(nombreOrigen, ciudadDestino, tiempo)?
+            "La ruta se agregó correctamente":"No se pudo agregar la ruta");
         }
 
     }
 
     private static void eliminarRuta(Grafo ciudades){
         Ciudad ciudadOrigen = null, ciudadDestino = null;
+
         System.out.println("Ingrese la ciudad de origen");
         String nombreOrigen = solicitarCiudad();
+
         System.out.println("Ingrese la ciudad de destino");
         String nombreDestino = solicitarCiudad();
+
         ciudadOrigen = buscarCiudad(ciudades, nombreOrigen);
         ciudadDestino = buscarCiudad(ciudades, nombreDestino);
+
         if (ciudadOrigen != null && ciudadDestino != null) {
-            ciudades.eliminarArco(ciudadOrigen, ciudadDestino);
+            System.out.println(ciudades.eliminarArco(nombreOrigen, nombreDestino)?
+            "La ruta se eliminó correctamente":"No se pudo eliminar la ruta");
+        }else{
+            if (ciudadOrigen == null) {
+                System.out.println("La ciudad de origen no existe");
+            }
+            if (ciudadDestino == null) {
+                System.out.println("La ciudad de destino no existe");
+            }
         }
+
     }
 
+    //TODO: rehacer este método, es horrible, parece que lo hizo un retrasado (yo).
+    //cambialo por un switch que de la opcion de modificar lo que le apetezca al usuario y borra este comentario
+    //TODO: borrar este comentario cuando se haya hecho lo anterior NO TE OLVIDES
     private static void modificarRuta(Grafo ciudades){
         Ciudad ciudadOrigen = null, ciudadDestino = null;
         Ciudad nuevaCiudadDestino = null;
@@ -308,13 +338,22 @@ public class menuCiudades {
         String nombreOrigen = solicitarCiudad();
         System.out.println("Ingrese la ciudad de destino");
         String nombreDestino = solicitarCiudad();
+        System.out.println("Ingrese el nuevo destino");
+        String nuevoDestino = solicitarCiudad();
+        nuevaCiudadDestino = buscarCiudad(ciudades, nuevoDestino);
         ciudadOrigen = buscarCiudad(ciudades, nombreOrigen);
         ciudadDestino = buscarCiudad(ciudades, nombreDestino);
         
-        if (ciudadOrigen != null && ciudadDestino != null) {
+        if (ciudadOrigen != null && ciudadDestino != null && nuevaCiudadDestino != null) {
             if (ciudades.eliminarArco(nombreOrigen, nombreDestino)) {
-                int tiempo = solicitarTiempo();
-                ciudades.insertarArco(nombreOrigen, nuevaCiudadDestino, tiempo);
+                double tiempo = solicitarTiempo();
+                nuevaCiudadDestino = buscarCiudad(ciudades, nuevoDestino);
+                if (nuevaCiudadDestino != null) {
+                    System.out.println(ciudades.insertarArco(nombreOrigen, nuevaCiudadDestino, tiempo)?
+                    "La ruta se modificó correctamente":"No se pudo modificar la ruta");
+                }else{
+                    System.out.println("No se encontro la ciudad");
+                }
             }else{
                 System.out.println("No se encontro la ruta");
             }
@@ -364,11 +403,11 @@ public class menuCiudades {
         return respuesta;
     }
 
-    private static int solicitarTiempo(){
-        int tiempo = 0;
+    private static double solicitarTiempo(){
+        double tiempo = 0;
         try {
             do {
-                tiempo = sc.nextInt();
+                tiempo = sc.nextDouble();
                 if (sc.hasNextLine()) {
                     sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
                 }

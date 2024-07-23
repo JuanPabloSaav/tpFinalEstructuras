@@ -158,9 +158,14 @@ public class menuEquipos {
                             break;
                         case 3:
                             String paisNuevo = solicitarPais();
-                            equipo.setPais(paisNuevo);
-                            arbolEquipos.eliminar(equipo);
-                            arbolEquipos.insertar(equipo);
+                            Equipo equipoAux = buscarEquipo(paisNuevo, arbolEquipos);
+                            if (equipoAux != null) {
+                                equipo.setPais(paisNuevo);
+                                arbolEquipos.eliminar(equipo);
+                                arbolEquipos.insertar(equipo);
+                            }else{
+                                System.out.println("Ya existe un equipo con ese pais");
+                            }
                             break;
                         case 4:
                             int puntosGanados = solicitarPuntosGanados();
