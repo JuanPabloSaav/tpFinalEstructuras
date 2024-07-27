@@ -54,9 +54,11 @@ public class NodoAvl {
         int alturaIzquierdo = 0, alturaDerecho = 0;
         if (izquierdo != null) {
             alturaIzquierdo = recalcularAlturaAux(izquierdo, alturaIzquierdo);
+
         }
         if (derecho != null) {
             alturaDerecho = recalcularAlturaAux(derecho, alturaDerecho);
+
         }
         if (alturaIzquierdo > alturaDerecho) {
             this.altura = alturaIzquierdo;
@@ -76,9 +78,9 @@ public class NodoAvl {
                 alturaDerecho = recalcularAlturaAux(nodo.derecho, alturaActual);
             }
             if (alturaIzquierdo > alturaDerecho) {
-                alturaActual = alturaIzquierdo;
+                alturaActual += alturaIzquierdo;
             }else{
-                alturaActual = alturaDerecho;
+                alturaActual += alturaDerecho;
             }
         }
         return alturaActual;

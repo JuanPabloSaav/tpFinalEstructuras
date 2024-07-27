@@ -74,7 +74,7 @@ public class Equipo implements Comparable<Equipo>{
     }
 
     public String toString(){
-        return "Apellido del técnico: " + this.apellidoTecnico + "\nGrupo: " + this.grupo + "\nPaís: " + this.pais + "\nPuntos ganados: " + this.puntosGanados + "\nGoles a favor: " + this.golesAFavor + "\nGoles en contra: " + this.golesEnContra+"\n";
+        return  "Pais:" + this.pais + "\nGrupo: " + this.grupo +"\nApellido del técnico: " + this.apellidoTecnico + "\nPuntos ganados: " + this.puntosGanados + "\nGoles a favor: " + this.golesAFavor + "\nGoles en contra: " + this.golesEnContra+"\n";
     }
 
     @Override

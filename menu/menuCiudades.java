@@ -29,6 +29,7 @@ public class menuCiudades {
             System.out.println("8. Eliminar ruta");
             System.out.println("9. Modificar ruta");
             System.out.println("10. Listar ciudades");
+            //TODO: agregar una opcion para listar las rutas de una ciudad en particular
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
@@ -79,7 +80,6 @@ public class menuCiudades {
                     break;
             }
         } while (opcion > 0);
-        sc.close();
     }
 
     private static void agregarCiudad(Grafo ciudades){
@@ -126,50 +126,62 @@ public class menuCiudades {
     }
 
     private static void modificarCiudad(Grafo ciudades){
-        String nombre = "";
+        int opcion = -1;
         Ciudad ciudad = null;
-        try {
-            System.out.println("Ingrese el nombre de la ciudad a modificar");
-            nombre = solicitarCiudad();
-            ciudad = buscarCiudad(ciudades, nombre);
-            if (ciudad == null) {
-                System.out.println("La ciudad no existe");
-            }else{
-                int opcion = -1;
-                do {
-                    System.out.println("¿Qué desea modificar?");
-                    System.out.println("1. Modificar nombre");
-                    System.out.println("2. Modificar alojamiento disponible");
-                    System.out.println("3. Modificar si es sede");
-                    opcion = sc.nextInt();
-                    switch (opcion) {
-                        case 1:
-                            String nuevoNombre = "";
-                            System.out.println("Ingrese el nuevo nombre de la ciudad");
-                            nuevoNombre = solicitarCiudad();
-                            ciudad.setNombre(nuevoNombre);
-                            break;
-                        case 2:
-                            opcion = -1;
-                            System.out.println("¿Tiene alojamiento disponible?");
-                            boolean alojamientoDisponible = solicitarSiNo();
-                            ciudad.setAlojamientoDisponible(alojamientoDisponible);
-                            break;
-                        case 3:
-                            System.out.println("¿Es sede?");
-                            boolean esSede = solicitarSiNo();
-                            ciudad.setEsSede(esSede);
-                            break;
-                        default:
-                            System.out.println("Opción inválida, intenta de nuevo");
-                            opcion = -1;
-                            break;
+        String nombre = solicitarCiudad();
+        ciudad = buscarCiudad(ciudades, nombre);
+        if (ciudad != null) {
+            do {
+                System.out.println("1. Modificar alojamiento disponible");
+                System.out.println("2. Modificar si es sede");
+                System.out.println("3. Modificar nombre");
+                System.out.println("0. Salir");
+                try {
+                    try {
+                        opcion = sc.nextInt();
+                    } catch (Exception e) {
+                        Log.write("ERROR:"+ e.getMessage() + " " + e.getStackTrace());
+                        opcion = -1;
                     }
-                } while (opcion < 0);
-            }
-        } catch (Exception e) {
-            System.out.println("Ocurrio un error, intentelo de nuevo");
-            Log.write("ERROR:"+ e.getMessage() + " " + e.getStackTrace());
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                    }
+                    if (opcion < 0) {
+                        System.out.println("Opción inválida, intenta de nuevo");
+                    }
+                } catch (Exception e) {
+                    Log.write("ERROR:"+ e.getMessage());
+                    opcion = -1;
+                    sc.next(); // Vaciar el buffer si hay una línea pendiente
+                }
+                switch (opcion) {
+                    case 1:
+                        System.out.println("¿Tiene alojamiento disponible?");
+                        ciudad.setAlojamientoDisponible(solicitarSiNo());
+                        System.out.println("Alojamiento disponible modificado correctamente");
+                        break;
+                    case 2:
+                        System.out.println("¿Es sede?");
+                        ciudad.setEsSede(solicitarSiNo());
+                        System.out.println("Sede modificada correctamente");
+                        break;
+                    case 3:
+                        System.out.println("Ingrese el nuevo nombre");
+                        String nuevoNombre = solicitarCiudad();
+                        if (buscarCiudad(ciudades, nuevoNombre) == null) {
+                            ciudad.setNombre(nuevoNombre);
+                            System.out.println("El nombre se modificó correctamente");
+                        }else{
+                            System.out.println("El nombre ya existe");
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            } while (opcion > 0);
+        } else {
+            System.out.println("La ciudad no existe");
         }
     }
 
@@ -190,6 +202,7 @@ public class menuCiudades {
         } catch (Exception e) {
             System.out.println("Ocurrio un error, intentelo de nuevo");
             Log.write("ERROR:"+ e.getMessage());
+            sc.next(); // Vaciar el buffer si hay una línea pendiente
         }
     }
 
@@ -296,7 +309,7 @@ public class menuCiudades {
         if (ciudadOrigen != null && ciudadDestino != null) {
             System.out.println("Ingrese el tiempo de viaje");
             double tiempo = solicitarTiempo();
-            System.out.println(ciudades.insertarArco(nombreOrigen, ciudadDestino, tiempo)?
+            System.out.println(ciudades.insertarArco(ciudadOrigen, ciudadDestino, tiempo)?
             "La ruta se agregó correctamente":"No se pudo agregar la ruta");
         }
 
@@ -315,7 +328,7 @@ public class menuCiudades {
         ciudadDestino = buscarCiudad(ciudades, nombreDestino);
 
         if (ciudadOrigen != null && ciudadDestino != null) {
-            System.out.println(ciudades.eliminarArco(nombreOrigen, nombreDestino)?
+            System.out.println(ciudades.eliminarArco(ciudadOrigen, ciudadDestino)?
             "La ruta se eliminó correctamente":"No se pudo eliminar la ruta");
         }else{
             if (ciudadOrigen == null) {
@@ -328,34 +341,70 @@ public class menuCiudades {
 
     }
 
-    //TODO: rehacer este método, es horrible, parece que lo hizo un retrasado (yo).
-    //cambialo por un switch que de la opcion de modificar lo que le apetezca al usuario y borra este comentario
-    //TODO: borrar este comentario cuando se haya hecho lo anterior NO TE OLVIDES
     private static void modificarRuta(Grafo ciudades){
         Ciudad ciudadOrigen = null, ciudadDestino = null;
-        Ciudad nuevaCiudadDestino = null;
         System.out.println("Ingrese la ciudad de origen");
         String nombreOrigen = solicitarCiudad();
         System.out.println("Ingrese la ciudad de destino");
         String nombreDestino = solicitarCiudad();
-        System.out.println("Ingrese el nuevo destino");
-        String nuevoDestino = solicitarCiudad();
-        nuevaCiudadDestino = buscarCiudad(ciudades, nuevoDestino);
         ciudadOrigen = buscarCiudad(ciudades, nombreOrigen);
         ciudadDestino = buscarCiudad(ciudades, nombreDestino);
-        
-        if (ciudadOrigen != null && ciudadDestino != null && nuevaCiudadDestino != null) {
-            if (ciudades.eliminarArco(nombreOrigen, nombreDestino)) {
-                double tiempo = solicitarTiempo();
-                nuevaCiudadDestino = buscarCiudad(ciudades, nuevoDestino);
-                if (nuevaCiudadDestino != null) {
-                    System.out.println(ciudades.insertarArco(nombreOrigen, nuevaCiudadDestino, tiempo)?
-                    "La ruta se modificó correctamente":"No se pudo modificar la ruta");
-                }else{
-                    System.out.println("No se encontro la ciudad");
+        if (ciudadOrigen != null && ciudadDestino != null) {
+            int opcion = -1;
+            double tiempo = 0;
+            do {
+                System.out.println("1. Modificar tiempo de viaje");
+                System.out.println("2. Modificar destino");
+                System.out.println("0. Salir");
+                try {
+                    opcion = sc.nextInt();
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                    }
+                    if (opcion < 0) {
+                        System.out.println("Opción inválida, intenta de nuevo");
+                    }
+                } catch (Exception e) {
+                    Log.write("ERROR:"+ e.getMessage());
+                    opcion = -1;
+                    sc.next(); // Vaciar el buffer si hay una línea pendiente
                 }
-            }else{
-                System.out.println("No se encontro la ruta");
+                switch (opcion) {
+                    case 1:
+                        System.out.println("Ingrese el nuevo tiempo de viaje");
+                        tiempo = solicitarTiempo();
+                        if (ciudades.eliminarArco(ciudadOrigen, ciudadDestino)) {
+                            System.out.println(ciudades.insertarArco(ciudadOrigen, ciudadDestino, tiempo)?
+                            "El tiempo de viaje se modificó correctamente":"No se pudo modificar el tiempo de viaje");
+                        }
+                        break;
+                    case 2:
+                        System.out.println("Ingrese la nueva ciudad de destino");
+                        String nuevoDestino = solicitarCiudad();
+                        Ciudad nuevaCiudadDestino = buscarCiudad(ciudades, nuevoDestino);
+                        if (nuevaCiudadDestino != null) {
+                            System.out.println("Ingrese el tiempo de viaje");
+                            tiempo = solicitarTiempo();
+                            if (ciudades.insertarArco(ciudadOrigen, nuevaCiudadDestino, tiempo)){
+                                System.out.println(ciudades.eliminarArco(ciudadOrigen, ciudadDestino)?
+                                "La ruta se modificó correctamente":"No se pudo modificar la ruta");
+                            }else{
+                                System.out.println("Ya existe una ruta entre las ciudades");
+                            }
+                        }else{
+                            System.out.println("La ciudad no existe");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } while (opcion > 0);
+        }else{
+            if (ciudadOrigen == null) {
+                System.out.println("La ciudad de origen no existe");
+            }
+            if (ciudadDestino == null) {
+                System.out.println("La ciudad de destino no existe");
             }
         }
     }
@@ -364,7 +413,9 @@ public class menuCiudades {
     private static String solicitarCiudad(){
         String nombre = "";
         do {
-            nombre = sc.nextLine().toLowerCase();
+            if ( sc.hasNextLine() ) {
+                nombre = sc.nextLine().toLowerCase();
+            }
             if (nombre.equals("")) {
                 System.out.println("Ingrese una ciudad valida");
             }
@@ -375,14 +426,11 @@ public class menuCiudades {
     private static boolean solicitarSiNo(){
         int opcion = -1;
         boolean respuesta = false;
-        try {
-            do {
+        do {
+            try {
                 System.out.println("1. Sí");
                 System.out.println("2. No");
                 opcion = sc.nextInt();
-                if (sc.hasNextLine()) {
-                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
-                }
                 switch (opcion) {
                     case 1:
                         respuesta = true;
@@ -392,14 +440,16 @@ public class menuCiudades {
                         break;
                     default:
                         System.out.println("Opción inválida, intenta de nuevo");
+                        opcion = -1;
                         break;
                 }
-            } while (opcion <= 0 || opcion > 2);
-        } catch (Exception e) {
-            Log.write("ERROR:"+ e.getMessage());
-            System.out.println("Ocurrio un error, intentalo de nuevo");
-            opcion = -1;
-        }
+            } catch (Exception e) {
+                Log.write("ERROR:"+ e.getMessage());
+                System.out.println("Ocurrio un error, intentalo de nuevo");
+                opcion = -1;
+                sc.next(); // Vaciar el buffer si hay una línea pendiente
+            }
+        } while (opcion <= 0 || opcion > 2);
         return respuesta;
     }
 
@@ -419,6 +469,7 @@ public class menuCiudades {
             Log.write("ERROR:"+ e.getMessage());
             System.out.println("Ocurrio un error, intentalo de nuevo");
             tiempo = -1;
+            sc.next(); // Vaciar el buffer si hay una línea pendiente
         }
         return tiempo;
     }

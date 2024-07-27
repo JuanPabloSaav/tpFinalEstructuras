@@ -32,16 +32,16 @@ public class  Avl {
                     nodo.setDerecho(reBalanceo(nodo.getDerecho()));
                 }else{
                     nodo.setDerecho(new NodoAvl(elem));
-                    exito = true;
                 }
-            }else if (elem.compareTo(nodo.getElem())<0) {
+                exito = true;
+            }else if (elem.compareTo(nodo.getElem())<=0) {
                 if (nodo.getIzquierdo() != null) {
                     insertarAux(elem, nodo.getIzquierdo());
                     nodo.setIzquierdo(reBalanceo(nodo.getIzquierdo()));
                 }else{
                     nodo.setIzquierdo(new NodoAvl(elem));
-                    exito = true;
                 }
+                exito = true;
             }
         }
         return exito;
@@ -101,7 +101,7 @@ public class  Avl {
             if (balanceoHijo >= 0) {
                 nodoHijo = rotarDerecha(nodoHijo);
             }else{
-                nodoHijo.setDerecho(rotarIzquierda(nodoHijo.getDerecho()));
+                nodoHijo.setIzquierdo(rotarIzquierda(nodoHijo.getIzquierdo()));
                 nodoHijo = rotarDerecha(nodoHijo);
             }
         }else if(balanceo < -1){
@@ -109,7 +109,7 @@ public class  Avl {
             if (balanceoHijo <= 0) {
                 nodoHijo = rotarIzquierda(nodoHijo);
             }else{
-                nodoHijo.setIzquierdo(rotarDerecha(nodoHijo.getIzquierdo()));
+                nodoHijo.setDerecho(rotarDerecha(nodoHijo.getDerecho()));
                 nodoHijo = rotarIzquierda(nodoHijo);
             }
         }
@@ -119,7 +119,7 @@ public class  Avl {
     private int balanceo(NodoAvl nodo){
         int balanceo = 0;
         if (nodo != null) {
-            balanceo = altura(nodo.getIzquierdo()) - altura(nodo.getDerecho());
+            balanceo = (altura(nodo.getIzquierdo())+1) - (altura(nodo.getDerecho())+1);
         }
         return balanceo;
     }

@@ -133,24 +133,56 @@ public class Grafo {
             if (nodoOrigen != null) {
                 NodoEnlace aux = nodoOrigen.getPrimerEnlace();
                 NodoVertice nodoDestino = null;
+                NodoEnlace ant = null;
                 while (aux != null) {
-                    if (aux.getSigEnlace() != null && aux.getSigEnlace().getVertice().equals(destino)) {
-                        nodoDestino = aux.getSigEnlace().getVertice();
-                        aux.setSigEnlace(aux.getSigEnlace().getSigEnlace());
+                    if (aux.getVertice().getElem().equals(destino)) {
+                        if (ant != null) {
+                            nodoDestino = aux.getVertice();
+                            ant.setSigEnlace(aux.getSigEnlace());
+                        }else{
+                            nodoDestino = aux.getVertice();
+                            nodoOrigen.setPrimerEnlace(aux.getSigEnlace());
+                        }
+                        break;
                     }
+                    ant = aux;
                     aux = aux.getSigEnlace();
                 }
                 aux = nodoDestino.getPrimerEnlace();
-                while (aux != null) {
-                    if (aux.getSigEnlace() != null && aux.getSigEnlace().getVertice().equals(nodoOrigen)) {
-                        aux.setSigEnlace(aux.getSigEnlace().getSigEnlace());
+                ant = null;
+                while (aux != null && !exito) {
+                    if (aux.getVertice().getElem().equals(origen)) {
+                        if (ant != null) {
+                            ant.setSigEnlace(aux.getSigEnlace());
+                        }else{
+                            nodoDestino.setPrimerEnlace(aux.getSigEnlace());
+                        }
                         exito = true;
                     }
+                    ant = aux;
                     aux = aux.getSigEnlace();
                 }
             }
         }
         return exito;
+    }
+
+    public double getTiempoArco(Object origen, Object destino){
+        double tiempo = 0.0;
+        if (inicio != null) {
+            NodoVertice nodoOrigen = buscarVertice(origen);
+            if (nodoOrigen != null) {
+                NodoEnlace aux = nodoOrigen.getPrimerEnlace();
+                while (aux != null) {
+                    if (aux.getVertice().getElem().equals(destino)) {
+                        tiempo = aux.getEtiqueta();
+                        break;
+                    }
+                    aux = aux.getSigEnlace();
+                }
+            }
+        }
+        return tiempo;
     }
 
     /**
@@ -201,7 +233,6 @@ public class Grafo {
         return existe;
     }
 
-    //TODO: probar
     /**
      * Verifica si existe un camino entre dos vertices
      * @param nodo Vertice origen

@@ -2,16 +2,19 @@ package estructuras.conjuntistas;
 
 import objetos.dominioPartido;
 import objetos.rangoPartido;
+import estructuras.lineales.Lista;
 
 public class NodoHashMapeo {
     private dominioPartido dominio;
-    private rangoPartido rango;
+    private Lista rango = new Lista();
     private NodoHashMapeo enlace;
 
     public NodoHashMapeo(dominioPartido dominio, rangoPartido rango, NodoHashMapeo enlace){
-
         this.dominio = dominio;
-        this.rango = rango;
+        //podria solicitar la lista en vez del rango pero no creo que en al primera creacion de un
+        //NodoHash se tenga una lista de rangos > 1 elemento
+        this.rango.insertar(rango, 1);
+        //el enlace puede ser null
         this.enlace = enlace;
     }
 
@@ -23,12 +26,17 @@ public class NodoHashMapeo {
         this.dominio = dominio;
     }
 
-    public rangoPartido getRango() {
-        return rango;
+    public Lista getRango() {
+        return rango.clone();
     }
 
-    public void setRango(rangoPartido rango) {
+    public void setRango(Lista rango) {
         this.rango = rango;
+    }
+    
+    public void agregarRango(rangoPartido rango){
+        //pos 1 para que siempre este primero el rango mas reciente
+        this.rango.insertar(rango, 1);
     }
 
     public NodoHashMapeo getEnlace() {
@@ -39,11 +47,16 @@ public class NodoHashMapeo {
         this.enlace = enlace;
     }
 
+    public boolean equals(NodoHashMapeo nodo){
+        return dominio.equals(nodo.getDominio());
+    }
+
     public int hashCode(){
         return dominio.hashCode();
     }
 
     public String toString(){
-        return "Dominio: "+ dominio.toString() + "\nRango: "+ rango.toString() + "\nHash: "+ hashCode() +"\n";
+        //Mejor no mostrar el rango para evitar problemas de impresion (al fin y al cabo es una lista)
+        return "Dominio: "+ dominio.toString() + "\nHash: "+ hashCode() +"\n";
     }
 }

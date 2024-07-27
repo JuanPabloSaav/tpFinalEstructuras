@@ -24,10 +24,21 @@ public class TablaHash {
         NodoHashMapeo bucket = tabla[pos];
         if (bucket != null) {
             while (bucket.getEnlace() != null) {
+                if (bucket.getDominio().toString().equals(dominio.toString())) {
+                    bucket.agregarRango(rango);
+                    exito = true;
+                    break;
+                }
                 bucket = bucket.getEnlace();
             }
-            bucket.setEnlace(elemento);
-            exito = true;
+            if (!exito) {
+                if (bucket.getDominio().toString().equals(dominio.toString())) {
+                    bucket.agregarRango(rango);
+                }else{
+                    bucket.setEnlace(elemento);
+                }
+                exito = true;
+            }
         }else{
             tabla[pos] = elemento;
             exito = true;
@@ -56,11 +67,12 @@ public class TablaHash {
     public Lista obtenerValor(dominioPartido dominio){
         Lista lista = new Lista();
         int pos = dominio.getClave() % primo;
-        int i = 1;
         NodoHashMapeo bucket = tabla[pos];
         while (bucket != null) {
-            lista.insertar(bucket, i);
-            i++;
+            if (bucket.getDominio().equals(dominio)) {
+                lista = bucket.getRango();
+                break;
+            }
             bucket = bucket.getEnlace();
         }
         return lista;
@@ -73,20 +85,6 @@ public class TablaHash {
             NodoHashMapeo bucket = tabla[i];
             while (bucket != null) {
                 lista.insertar(bucket.getDominio(), longitud);
-                longitud++;
-                bucket = bucket.getEnlace();
-            }
-        }
-        return lista;
-    }
-
-    public Lista obtenerRangos(){
-        Lista lista = new Lista();
-        int longitud = 1;
-        for (int i = 0; i < tamaño; i++) {
-            NodoHashMapeo bucket = tabla[i];
-            while (bucket != null) {
-                lista.insertar(bucket.getRango(), longitud);
                 longitud++;
                 bucket = bucket.getEnlace();
             }
@@ -111,20 +109,12 @@ public class TablaHash {
         return vacio;
     }
 
-    public String toString(){
-        String cadena = "";
-        for (int i = 0; i <= tamaño; i++) {
-            NodoHashMapeo bucket = tabla[i];
-            cadena += "Posicion " + i + ": \n";
-            while (bucket != null) {
-                cadena += bucket.toString() + "\n";
-                bucket = bucket.getEnlace();
-            }
-            cadena += "\n";
-        }
-        return cadena;
-    }
 
+    /**
+     * 
+     * @param n
+     * @return
+     */
     private static boolean[] cribaDeEratostenes(int n){
         boolean[] esPrimo = new boolean[n];
         boolean exito = false;
@@ -168,11 +158,13 @@ public class TablaHash {
         for (int i = 0; i < tamaño; i++) {
             NodoHashMapeo bucket = tabla[i];
             while (bucket != null) {
-                Object[] datos = {bucket.getDominio(), bucket.getRango()};
+                Object[] datos = new Object[2];
+                datos[0] = bucket.getDominio();
+                datos[1] = bucket.getRango();
                 lista.insertar(datos, lista.longitud()+1);
                 bucket = bucket.getEnlace();
             }
         }
         return lista;
-    }
+    } 
 }

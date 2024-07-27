@@ -24,6 +24,9 @@ public class menuPartidos {
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine();
+                }
             } catch (Exception e) {
                 opcion = -1;
             }
@@ -33,7 +36,7 @@ public class menuPartidos {
                     break;
             
                 case 2:
-                    buscarPartido(tablaPartidos);
+                    buscarPartido(tablaPartidos, arbolEquipos);
                     break;
 
                 case 3:
@@ -44,7 +47,6 @@ public class menuPartidos {
                     break;
             }
         } while (opcion != 0);
-        sc.close();
     }
 
     public static void agregarPartido(TablaHash tablaPartidos, Avl arbolEquipos, Grafo ciudades){
@@ -80,7 +82,9 @@ public class menuPartidos {
             Equipo aux = eq1;
             eq1 = eq2;
             eq2 = aux;
-            
+            int aux2 = golesEq1;
+            golesEq1 = golesEq2;
+            golesEq2 = aux2;
         }
 
         System.out.println("Ingrese la ciudad donde se jugo el partido");
@@ -96,26 +100,33 @@ public class menuPartidos {
             eq1.setPuntosGanados(1+eq1.getPuntosGanados());
             eq2.setPuntosGanados(1+eq2.getPuntosGanados());
         }
-        tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(ronda, ciudad, estadio,golesEq1, golesEq2));
+        eq1.setGolesAFavor(golesEq1+eq1.getGolesAFavor());
+        eq1.setGolesEnContra(golesEq2+eq1.getGolesEnContra());
+        eq2.setGolesAFavor(golesEq2+eq2.getGolesAFavor());
+        eq2.setGolesEnContra(golesEq1+eq2.getGolesEnContra());
+        System.out.println(tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(ronda, ciudad, estadio,golesEq1, golesEq2))? 
+        "Partido agregado con exito": "No se pudo agregar el partido");
     }
 
-    public static void buscarPartido(TablaHash tablaPartidos){
-        String paisEq1, paisEq2;
+    public static void buscarPartido(TablaHash tablaPartidos, Avl arbolEquipos){
+        Equipo eq1, eq2;
 
         System.out.println("Ingrese el pais del primer equipo");
-        paisEq1 = sc.nextLine();
+        eq1 = solicitarEquipo(arbolEquipos);
         System.out.println("Ingrese el pais del segundo equipo");
-        paisEq2 = sc.nextLine();
+        eq2 = solicitarEquipo(arbolEquipos);
+        if (eq1.compareTo(eq2) > 0) {
+            Equipo aux = eq1;
+            eq1 = eq2;
+            eq2 = aux;
+        }
 
-        paisEq1 = paisEq1.toLowerCase();
-        paisEq2 = paisEq2.toLowerCase();
-
-        dominioPartido dp = new dominioPartido(new Equipo(paisEq1), new Equipo(paisEq2));
+        dominioPartido dp = new dominioPartido(eq1, eq2);
         Lista listaPartidos = tablaPartidos.obtenerValor(dp);
         int longitud = listaPartidos.longitud();
         if (longitud > 0) {
             System.out.println("Se encontraron los siguientes partidos");
-            System.out.println(paisEq1.toUpperCase() + " vs " + paisEq2.toUpperCase());
+            System.out.println(eq1.getPais().toUpperCase() + " vs " + eq2.getPais().toUpperCase());
             for (int i = 1; i <= longitud; i++) {
                 rangoPartido rp = (rangoPartido) listaPartidos.recuperar(i);
                 System.out.println(rp.toString());
@@ -126,18 +137,22 @@ public class menuPartidos {
     }
 
     private static void mostrarPartidos(TablaHash tablaPartidos){
-        Lista lista = tablaPartidos.listar();
-        int longitud = lista.longitud();
+        Lista listaPartidos = tablaPartidos.listar();
+        int longitud = listaPartidos.longitud();
         for (int i = 1; i <= longitud; i++) {
-            Object[] datos = (Object[]) lista.recuperar(i);
-            dominioPartido dp = (dominioPartido) datos[0];
-            rangoPartido rp = (rangoPartido) datos[1];
-            System.out.println(dp.getEq1().getPais() + "vs" + dp.getEq2().getPais() + ": ");
-            System.out.println("Estadio: "+rp.getEstadio()
-            +"\nCiudad: "+rp.getCiudad().getNombre()
-            +"\nRonda: "+rp.getRonda() 
-            + "\nGoles "+dp.getEq1().getPais()+": "+rp.getGolesEq1()
-            +"\nGoles "+dp.getEq2().getPais()+": " +rp.getGolesEq2() + "\n");
+            Object[] partido = (Object[]) listaPartidos.recuperar(i);
+            dominioPartido domPartido = (dominioPartido) partido[0];
+            Lista rangos = (Lista) partido[1];
+            System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
+            while (!rangos.esVacia()) {
+                rangoPartido rango = (rangoPartido) rangos.recuperar(1);
+                System.out.println("Ronda: "+ rango.getRonda() 
+                + " - Ciudad: "+ rango.getCiudad().getNombre() 
+                + " - Estadio: "+ rango.getNombreEstadio() 
+                + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1()) 
+                + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
+                rangos.eliminar(1);
+            }
         }
     }
 
@@ -157,11 +172,14 @@ public class menuPartidos {
         do {
             try {
                 goles = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine();
+                }
             } catch (Exception e) {
                 System.out.println("Ingrese un numero valido");
                 goles = -1;
             }
-        } while (goles >= 0);
+        } while (goles < 0);
         return goles;
     }
 
@@ -175,6 +193,9 @@ public class menuPartidos {
             System.out.println("4. Final");
             try {
                 opcion = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine();
+                }
             } catch (Exception e) {
                 opcion = -1;
             }
@@ -199,7 +220,7 @@ public class menuPartidos {
                     System.out.println("Ingrese una opcion valida");
                     break;
             }
-        } while (opcion != -1);
+        } while (opcion < 1 || opcion > 4);
         return ronda;
     }
 

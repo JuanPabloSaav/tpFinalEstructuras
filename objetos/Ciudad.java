@@ -40,6 +40,15 @@ public class Ciudad {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if (obj instanceof Ciudad){
+            Ciudad ciudad = (Ciudad) obj;
+            return this.nombre.equals(ciudad.getNombre());
+        }
+        return false;
+    }
+
+    @Override
     public int hashCode(){
         int suma = 0;
         for (int i = 0; i < this.nombre.length(); i++){

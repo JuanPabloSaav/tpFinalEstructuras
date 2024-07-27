@@ -3,6 +3,7 @@ package objetos;
 public class dominioPartido {
     private Equipo eq1;
     private Equipo eq2;
+    // se almacena la clave para mejorar la eficiencia (total no la voy a cambiar)
     private int clave;
 
     /**
@@ -48,6 +49,10 @@ public class dominioPartido {
      */
     public Equipo getEq2() {
         return eq2;
+    }
+
+    public boolean equals(dominioPartido dominio){
+        return this.clave == dominio.getClave();
     }
 
 }

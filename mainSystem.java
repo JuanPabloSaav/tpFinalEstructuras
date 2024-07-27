@@ -70,13 +70,17 @@ public class mainSystem{
         for (int i = 1; i <= longitud; i++) {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
             dominioPartido domPartido = (dominioPartido) partido[0];
-            rangoPartido rango = (rangoPartido) partido[1];
-            Log.write(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais()
-            + ": Ronda: "+ rango.getRonda()
-            + " - Ciudad: "+ rango.getCiudad().getNombre()
-            + " - Estadio: "+ rango.getNombreEstadio()
-            + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1())
-            + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
+            Lista rangos = (Lista) partido[1];
+            Log.write(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
+            while (!rangos.esVacia()) {
+                rangoPartido rango = (rangoPartido) rangos.recuperar(1);
+                Log.write("Ronda: "+ rango.getRonda() 
+                + " - Ciudad: "+ rango.getCiudad().getNombre() 
+                + " - Estadio: "+ rango.getNombreEstadio() 
+                + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1()) 
+                + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
+                rangos.eliminar(1);
+            }
         }
         Log.write("Estructuras cargadas exitosamente");
     }
@@ -112,6 +116,7 @@ public class mainSystem{
                         break;
                     default:
                         System.out.println("Opcion invalida, intente otra vez");
+                        opcion = -1;
                         break;
                 }
             } catch (Exception e) {
@@ -121,7 +126,6 @@ public class mainSystem{
             }
 
         } while (opcion != 0);
-        sc.close();
     }
 
     private static void inicializarEstructuras(Avl equipos, Grafo ciudades, TablaHash partidos){
@@ -143,60 +147,76 @@ public class mainSystem{
                     String[] data = typeData[1].split(";");
                     switch (typeData[0]) {
                         case "E":
-                            Log.write("Añadiendo Equipo: " + data[0]);
-                            data[0] = data[0].replaceFirst("\\s+", "");
-                            data[1] = data[1].replaceFirst("\\s+", "");
-                            data[2] = data[2].replaceFirst("\\s+", "");
-                            Equipo equipo = new Equipo(
-                                data[1].toLowerCase(),//ApellidoTecnico
-                                data[2].toLowerCase(),//grupoInicial
-                                data[0].toLowerCase()//Pais
-                            );
-                            equipos.insertar(equipo);
-                            Log.write("Equipo añadido");
+                            try {
+                                Log.write("Añadiendo Equipo: " + data[0]);
+                                data[0] = data[0].replaceFirst("\\s+", "");
+                                data[1] = data[1].replaceFirst("\\s+", "");
+                                data[2] = data[2].replaceFirst("\\s+", "");
+                                Equipo equipo = new Equipo(
+                                    data[1].toLowerCase(),//ApellidoTecnico
+                                    data[2].toLowerCase(),//grupoInicial
+                                    data[0].toLowerCase()//Pais
+                                );
+                                equipos.insertar(equipo);
+                                Log.write("Equipo añadido");
+                            } catch (Exception e) {
+                                Log.write("Error al añadir equipo: " + e.getLocalizedMessage());
+                            }
                             break;
                         case "C":
-                            Log.write("Añadiendo Ciudad: " + data[0]);
-                            data[0] = data[0].replaceFirst("\\s+", "");
-                            data[1] = data[1].replaceFirst("\\s+", "");
-                            data[2] = data[2].replaceFirst("\\s+", "");
-                            Ciudad ciudad = new Ciudad(
-                                data[0].toLowerCase(),//nombre
-                                Boolean.parseBoolean(data[1]),//alojamiento
-                                Boolean.parseBoolean(data[2])//sedeDeCopa
-                            );
-                            ciudades.insertarVertice(ciudad);
-                            Log.write("Ciudad añadida");
+                            try {
+                                Log.write("Añadiendo Ciudad: " + data[0]);
+                                data[0] = data[0].replaceFirst("\\s+", "");
+                                data[1] = data[1].replaceFirst("\\s+", "");
+                                data[2] = data[2].replaceFirst("\\s+", "");
+                                Ciudad ciudad = new Ciudad(
+                                    data[0].toLowerCase(),//nombre
+                                    Boolean.parseBoolean(data[1]),//alojamiento
+                                    Boolean.parseBoolean(data[2])//sedeDeCopa
+                                );
+                                ciudades.insertarVertice(ciudad);
+                                Log.write("Ciudad añadida");
+                            } catch (Exception e) {
+                                Log.write("Error al añadir ciudad: " + e.getLocalizedMessage());
+                            }
                             break;
                         case "P":
-                            data[0] = data[0].replaceFirst("\\s+", "");
-                            data[1] = data[1].replaceFirst("\\s+", "");
-                            data[2] = data[2].replaceFirst("\\s+", "");
-                            data[3] = data[3].replaceFirst("\\s+", "");
-                            data[4] = data[4].replaceFirst("\\s+", "");
-                            data[5] = data[5].replaceFirst("\\s+", "");
-                            data[6] = data[6].replaceFirst("\\s+", "");
-                            Object[] tempPartido = {
-                                data[0].toLowerCase(), //eq1
-                                data[1].toLowerCase(), //eq2
-                                data[2].toLowerCase(), //ronda
-                                data[3].toLowerCase(), //ciudad
-                                data[4].toLowerCase(), //estadio
-                                Integer.parseInt(data[5]),//eq1 goles
-                                Integer.parseInt(data[6])//eq2 goles
-                            };
-                            tempPartidos.poner(tempPartido);
+                            try {
+                                data[0] = data[0].replaceFirst("\\s+", "");
+                                data[1] = data[1].replaceFirst("\\s+", "");
+                                data[2] = data[2].replaceFirst("\\s+", "");
+                                data[3] = data[3].replaceFirst("\\s+", "");
+                                data[4] = data[4].replaceFirst("\\s+", "");
+                                data[5] = data[5].replaceFirst("\\s+", "");
+                                data[6] = data[6].replaceFirst("\\s+", "");
+                                Object[] tempPartido = {
+                                    data[0].toLowerCase(), //eq1
+                                    data[1].toLowerCase(), //eq2
+                                    data[2].toLowerCase(), //ronda
+                                    data[3].toLowerCase(), //ciudad
+                                    data[4].toLowerCase(), //estadio
+                                    Integer.parseInt(data[5]),//eq1 goles
+                                    Integer.parseInt(data[6])//eq2 goles
+                                };
+                                tempPartidos.poner(tempPartido);
+                            } catch (Exception e) {
+                                Log.write("Error al añadir partido: " + e.getLocalizedMessage());
+                            }
                             break;
                         case "R":
-                            data[0] = data[0].replaceFirst("\\s+", "");
-                            data[1] = data[1].replaceFirst("\\s+", "");
-                            data[2] = data[2].replaceFirst("\\s+", "");
-                            Object[] tempRuta = {
-                                data[0].toLowerCase(),//ciudad1
-                                data[1].toLowerCase(),//ciudad2
-                                Double.parseDouble(data[2])//tiempo
-                            };
-                            tempRutas.poner(tempRuta);
+                            try {
+                                data[0] = data[0].replaceFirst("\\s+", "");
+                                data[1] = data[1].replaceFirst("\\s+", "");
+                                data[2] = data[2].replaceFirst("\\s+", "");
+                                Object[] tempRuta = {
+                                    data[0].toLowerCase(),//ciudad1
+                                    data[1].toLowerCase(),//ciudad2
+                                    Double.parseDouble(data[2])//tiempo
+                                };
+                                tempRutas.poner(tempRuta);
+                            } catch (Exception e) {
+                                Log.write("Error al añadir ruta: " + e.getLocalizedMessage());
+                            }
                             break;
                         default:
                             Log.write("Linea invalida en el archivo");
@@ -215,64 +235,75 @@ public class mainSystem{
 
     private static void inicializarRutas(Cola tempRutas, Grafo ciudades){
         while (!tempRutas.esVacia()) {
-            Object[] tempRuta = (Object[]) tempRutas.obtenerFrente();
-            tempRutas.sacar();
-            Log.write("Añadiendo Ruta: " + tempRuta[0] + " - " + tempRuta[1]);
-            Ciudad origen = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[0]));
-            Ciudad destino = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[1]));
-            if (ciudades.insertarArco(origen, destino, ((double) tempRuta[2]))) {
-                
-                Log.write("Ruta añadida");
-            }else{
-                Log.write("Error al añadir ruta");
+            try {
+                Object[] tempRuta = (Object[]) tempRutas.obtenerFrente();
+                tempRutas.sacar();
+                Log.write("Añadiendo Ruta: " + tempRuta[0] + " - " + tempRuta[1]);
+                Ciudad origen = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[0]));
+                Ciudad destino = menuCiudades.buscarCiudad(ciudades, ((String) tempRuta[1]));
+                if (ciudades.insertarArco(origen, destino, ((double) tempRuta[2]))) {
+                    
+                    Log.write("Ruta añadida");
+                }else{
+                    Log.write("Error al añadir ruta");
+                }
+            } catch (Exception e) {
+                Log.write("Error al añadir ruta: " + e.getLocalizedMessage());
             }
         }
     }
 
     private static void inicializarPartidos(Avl equipos, TablaHash partidos, Cola tempPartidos, Grafo ciudades){
         while (!tempPartidos.esVacia()) {
-            Object[] tempPartido = (Object[]) tempPartidos.obtenerFrente();
-            tempPartidos.sacar();
-            Log.write("Añadiendo Partido: " + tempPartido[0] + " - " + tempPartido[1]);
-            String eq1 = (String) tempPartido[0];
-            String eq2 = (String) tempPartido[1];
-            if (eq1.compareTo(eq2) > 0) {
-                String aux = eq1;
-                eq1 = eq2;
-                eq2 = aux;
-            }
-            Equipo equipo1 = menuEquipos.buscarEquipo(eq1, equipos);
-            Equipo equipo2 = menuEquipos.buscarEquipo(eq2, equipos);
-            Ciudad ciudad = menuCiudades.buscarCiudad(ciudades, ((String) tempPartido[3]));
-            if (equipo1 != null && equipo2 != null) {
-                int golesEq1 = (int) tempPartido[5];
-                int golesEq2 = (int) tempPartido[6];
-                equipo1.setGolesAFavor(golesEq1+equipo1.getGolesAFavor());
-                equipo1.setGolesEnContra(golesEq2+equipo1.getGolesEnContra());
-                equipo2.setGolesAFavor(golesEq2+equipo2.getGolesAFavor());
-                equipo2.setGolesEnContra(golesEq1+equipo2.getGolesEnContra());
-                
-                if (((String) tempPartido[2]).equals("grupo")) {
-                    if (golesEq1 > golesEq2) {
-                        equipo1.setPuntosGanados(3+equipo1.getPuntosGanados());
-                    }else if (golesEq1 < golesEq2) {
-                        equipo2.setPuntosGanados(3+equipo2.getPuntosGanados());
-                    }else{
-                        equipo1.setPuntosGanados(1+equipo1.getPuntosGanados());
-                        equipo2.setPuntosGanados(1+equipo2.getPuntosGanados());
-                    }
+            try {
+                Object[] tempPartido = (Object[]) tempPartidos.obtenerFrente();
+                tempPartidos.sacar();
+                Log.write("Añadiendo Partido: " + tempPartido[0] + " - " + tempPartido[1]);
+                String eq1 = (String) tempPartido[0];
+                String eq2 = (String) tempPartido[1];
+                if (eq1.compareTo(eq2) > 0) {
+                    String aux = eq1;
+                    eq1 = eq2;
+                    eq2 = aux;
+                    int aux2 = (int) tempPartido[5];
+                    tempPartido[5] = (int) tempPartido[6];
+                    tempPartido[6] = aux2;
                 }
-                dominioPartido domPartido = new dominioPartido(equipo1, equipo2);
-                rangoPartido rango = new rangoPartido(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
-                partidos.asociar(domPartido, rango);
-                Log.write("Partido añadido");
+                Equipo equipo1 = menuEquipos.buscarEquipo(eq1, equipos);
+                Equipo equipo2 = menuEquipos.buscarEquipo(eq2, equipos);
+                Ciudad ciudad = menuCiudades.buscarCiudad(ciudades, ((String) tempPartido[3]));
+                if (equipo1 != null && equipo2 != null) {
+                    int golesEq1 = (int) tempPartido[5];
+                    int golesEq2 = (int) tempPartido[6];
+                    equipo1.setGolesAFavor(golesEq1+equipo1.getGolesAFavor());
+                    equipo1.setGolesEnContra(golesEq2+equipo1.getGolesEnContra());
+                    equipo2.setGolesAFavor(golesEq2+equipo2.getGolesAFavor());
+                    equipo2.setGolesEnContra(golesEq1+equipo2.getGolesEnContra());
+                    
+                    if (((String) tempPartido[2]).equals("grupo")) {
+                        if (golesEq1 > golesEq2) {
+                            equipo1.setPuntosGanados(3+equipo1.getPuntosGanados());
+                        }else if (golesEq1 < golesEq2) {
+                            equipo2.setPuntosGanados(3+equipo2.getPuntosGanados());
+                        }else{
+                            equipo1.setPuntosGanados(1+equipo1.getPuntosGanados());
+                            equipo2.setPuntosGanados(1+equipo2.getPuntosGanados());
+                        }
+                    }
+                    dominioPartido domPartido = new dominioPartido(equipo1, equipo2);
+                    rangoPartido rango = new rangoPartido(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
+                    partidos.asociar(domPartido, rango);
+                    Log.write("Partido añadido");
+                }
+            } catch (Exception e) {
+                Log.write("Error al añadir partido: " + e.getLocalizedMessage());
             }
         }
         
     }
 
     private static void mostrarEstructuras(Avl equipos, Grafo ciudades, TablaHash partidos){
-        System.out.println("Equipos: ");
+        System.out.println("\nEquipos: ");
         Lista listaEquipos = equipos.listar();
         int longitud = listaEquipos.longitud();
         for (int i = 1; i <= longitud; i++) {
@@ -284,31 +315,35 @@ public class mainSystem{
             + " - Goles en contra: " + Integer.toString(equipo.getGolesEnContra())
             + " - Puntos ganados: " + Integer.toString(equipo.getPuntosGanados()));
         }
-        System.out.println("Ciudades: ");
+        System.out.println("\nCiudades: ");
         Lista listaCiudades = ciudades.listarVertices();
         longitud = listaCiudades.longitud();
         for (int i = 1; i <= longitud; i++) {
-            NodoVertice nodo = (NodoVertice) listaCiudades.recuperar(i);
-            Ciudad ciudad = (Ciudad) nodo.getElem();
+            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(i);
             System.out.println(ciudad.getNombre() 
             + ": Alojamiento: "+ ciudad.getAlojamientoDisponible() 
             + " - Sede de Copa: "+ ciudad.getEsSede());
         }
 
-        System.out.println("Partidos: ");
+        System.out.println("\nPartidos: ");
         Lista listaPartidos = partidos.listar();
         longitud = listaPartidos.longitud();
         for (int i = 1; i <= longitud; i++) {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
             dominioPartido domPartido = (dominioPartido) partido[0];
-            rangoPartido rango = (rangoPartido) partido[1];
-            System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais()
-            + ": Ronda: "+ rango.getRonda()
-            + " - Ciudad: "+ rango.getCiudad().getNombre()
-            + " - Estadio: "+ rango.getNombreEstadio()
-            + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1())
-            + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
+            Lista rangos = (Lista) partido[1];
+            System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
+            while (!rangos.esVacia()) {
+                rangoPartido rango = (rangoPartido) rangos.recuperar(1);
+                System.out.println("Ronda: "+ rango.getRonda() 
+                + " - Ciudad: "+ rango.getCiudad().getNombre() 
+                + " - Estadio: "+ rango.getNombreEstadio() 
+                + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1()) 
+                + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
+                rangos.eliminar(1);
+            }
         }
+        System.out.println("");
     }
 
 }

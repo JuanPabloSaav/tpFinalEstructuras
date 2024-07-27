@@ -24,6 +24,9 @@ public class menuEquipos {
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
             } catch (Exception e) {
                 opcion = -1;
             }
@@ -54,7 +57,6 @@ public class menuEquipos {
                     break;
             }
         } while (opcion != 0);
-        sc.close();
     }
 
     public static void agregarEquipo(Avl arbolEquipos) {
@@ -64,7 +66,7 @@ public class menuEquipos {
         grupo = solicitarGrupo();
         pais = solicitarPais();
 
-        arbolEquipos.insertar(new Equipo(apellidoTecnico, grupo, pais));
+        System.out.println(arbolEquipos.insertar(new Equipo(apellidoTecnico, grupo, pais))? "Equipo agregado" : "No se pudo agregar el equipo");
     }
 
     public static Equipo buscarEquipo(String nombrePais, Avl arbolEquipos) {
@@ -98,17 +100,24 @@ public class menuEquipos {
 
     private static void buscarPorRango(Avl arbolEquipos) {
         String pais1, pais2;
+        Equipo eq1, eq2;
         System.out.println("Primer pais");
         pais1 = solicitarPais();
 
         System.out.println("Segundo pais");
         pais2 = solicitarPais();
 
-        Lista lista = arbolEquipos.listarRango(pais1, pais2);
+        eq1 = buscarEquipo(pais1, arbolEquipos);
+        eq2 = buscarEquipo(pais2, arbolEquipos);
+
+        Lista lista = arbolEquipos.listarRango(eq1, eq2);
         int longitud = lista.longitud();
         for (int i = 1; i <= longitud; i++) {
             Equipo equipo = (Equipo) lista.recuperar(i);
-            System.out.println("Equipo: " + equipo.toString());
+            System.out.println("Equipo: " + equipo.getPais() + "\n" +
+                    "Puntos ganados: " + equipo.getPuntosGanados() + "\n" +
+                    "Goles a favor: " + equipo.getGolesAFavor() + "\n" +
+                    "Goles en contra: " + equipo.getGolesEnContra());
         }
     }
 
@@ -117,7 +126,7 @@ public class menuEquipos {
         int longitud = lista.longitud();
         for (int i = 1; i <= longitud; i++) {
             Equipo equipo = (Equipo) lista.recuperar(i);
-            System.out.println("Equipo: " + equipo.toString());
+            System.out.println("Equipo: " + equipo.getPais());
         }
     }
 
@@ -125,7 +134,7 @@ public class menuEquipos {
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
         if (equipo != null) {
-            arbolEquipos.eliminar(equipo);
+            System.out.println(arbolEquipos.eliminar(equipo)? "Equipo eliminado" : "No se pudo eliminar el equipo");
         } else {
             System.out.println("No se encontro el equipo");
         }
@@ -135,6 +144,13 @@ public class menuEquipos {
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
         if (equipo != null) {
+            System.out.println("Equipo " + equipo.getPais() 
+            + "\nTecnico: " + equipo.getApellidoTecnico() 
+            + "\nGrupo: " + equipo.getGrupo() 
+            + "\nPuntos ganados: " + equipo.getPuntosGanados() 
+            + "\nGoles a favor: " + equipo.getGolesAFavor() 
+            + "\nGoles en contra: " + equipo.getGolesEnContra());
+
             int opcion = -1;
             try {
                 do {
@@ -147,6 +163,9 @@ public class menuEquipos {
                     System.out.println("6. Modificar goles en contra");
                     System.out.println("0. Salir");
                     opcion = sc.nextInt();
+                    if (sc.hasNextLine()) {
+                        sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                    }
                     switch (opcion) {
                         case 1:
                             String apellidoTecnico = solicitarApellidoTecnico();
@@ -168,18 +187,25 @@ public class menuEquipos {
                             }
                             break;
                         case 4:
-                            int puntosGanados = solicitarPuntosGanados();
+                            System.out.println("Ingrese los puntos ganados");
+                            int puntosGanados = solicitarGolesOPuntos();
                             equipo.setPuntosGanados(puntosGanados);
                             break;
                         case 5:
-                            int golesAFavor = solicitarGolesAFavor();
+                            System.out.println("Ingrese los goles a favor");
+                            int golesAFavor = solicitarGolesOPuntos();
                             equipo.setGolesAFavor(golesAFavor);
                             break;
                         case 6:
-                            int golesEnContra = solicitarGolesEnContra();
+                            System.out.println("Ingrese los goles en contra");
+                            int golesEnContra = solicitarGolesOPuntos();
                             equipo.setGolesEnContra(golesEnContra);
                             break;
+                        case 7:
+                            break;
                         default:
+                            System.out.println("Ingrese una opcion valida");
+                            opcion = -1;
                             break;
                     }
                 } while (opcion < 0 && opcion >= 7);
@@ -201,7 +227,7 @@ public class menuEquipos {
         }
         lista = arbolGoles.listar();
         longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
+        for (int i = longitud; i >= 1; i--) {
             EquipoGoles equipo = (EquipoGoles) lista.recuperar(i);
             System.out.println("Equipo: " + equipo.toString());
         }
@@ -212,7 +238,7 @@ public class menuEquipos {
         do {
             System.out.println("Ingrese el apellido del tecnico");
             try {
-                apellidoTecnico = sc.nextLine().toLowerCase();
+                apellidoTecnico = sc.nextLine().toLowerCase().trim();
                 if (apellidoTecnico.equals("")) {
                     System.out.println("Ingrese un apellido valido");
                 }
@@ -234,6 +260,9 @@ public class menuEquipos {
             System.out.println("4. D");
             try {
                 opcionGrupo = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
             } catch (Exception e) {
                 opcionGrupo = -1;
             }
@@ -267,7 +296,7 @@ public class menuEquipos {
         do {
             System.out.println("Ingrese el pais");
             try {
-                pais = sc.nextLine().toLowerCase();
+                pais = sc.nextLine().toLowerCase().trim();
                 if (pais.equals("")) {
                     System.out.println("Ingrese un pais valido");
                 }
@@ -278,12 +307,14 @@ public class menuEquipos {
         return pais;
     }
 
-    private static int solicitarPuntosGanados() {
+    private static int solicitarGolesOPuntos() {
         int puntosGanados = -1;
         do {
-            System.out.println("Ingrese los puntos ganados");
             try {
                 puntosGanados = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
             } catch (Exception e) {
                 puntosGanados = -1;
             }
@@ -292,31 +323,5 @@ public class menuEquipos {
             }
         } while (puntosGanados < 0);
         return puntosGanados;
-    }
-
-    private static int solicitarGolesAFavor() {
-        int golesAFavor = -1;
-        do {
-            System.out.println("Ingrese los goles a favor");
-            try {
-                golesAFavor = sc.nextInt();
-            } catch (Exception e) {
-                golesAFavor = -1;
-            }
-        } while (golesAFavor < 0);
-        return golesAFavor;
-    }
-
-    private static int solicitarGolesEnContra() {
-        int golesEnContra = -1;
-        do {
-            System.out.println("Ingrese los goles en contra");
-            try {
-                golesEnContra = sc.nextInt();
-            } catch (Exception e) {
-                golesEnContra = -1;
-            }
-        } while (golesEnContra < 0);
-        return golesEnContra;
     }
 }
