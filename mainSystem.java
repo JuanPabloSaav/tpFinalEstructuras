@@ -1,5 +1,4 @@
 import estructuras.grafo.Grafo;
-import estructuras.grafo.NodoVertice;
 import estructuras.conjuntistas.Avl;
 import estructuras.conjuntistas.TablaHash;
 import estructuras.lineales.Cola;
