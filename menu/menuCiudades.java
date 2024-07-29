@@ -354,7 +354,7 @@ public class menuCiudades {
             double tiempo = 0;
             do {
                 System.out.println("1. Modificar tiempo de viaje");
-                System.out.println("2. Modificar destino");
+                System.out.println("2. Modificar destino"); // Al final no era necesario pero bueno.
                 System.out.println("0. Salir");
                 try {
                     opcion = sc.nextInt();
