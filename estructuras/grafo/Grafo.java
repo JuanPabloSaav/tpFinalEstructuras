@@ -476,4 +476,44 @@ public class Grafo {
         }
         return camino;
     }
+
+    public Lista listarArcos(){
+        Lista visitados = new Lista();
+        Lista lista = new Lista();
+        if (inicio != null) {
+            visitados = listarArcosAux(inicio, visitados, lista);
+        }
+        return lista;
+    }
+
+    private Lista listarArcosAux(NodoVertice nodo, Lista visitados, Lista lista){
+        if (nodo != null && !nodoVisitado(nodo, visitados)) {
+            visitados.insertar(nodo, 1);
+            NodoEnlace aux = nodo.getPrimerEnlace();
+            while (aux != null) {
+                if (!nodoVisitado(aux.getVertice(), visitados)) {
+                    Object[] arco = new Object[3];
+                    arco[0] = nodo.getElem();
+                    arco[1] = aux.getVertice().getElem();
+                    arco[2] = aux.getEtiqueta();
+                    lista.insertar(arco, 1);
+                }
+                aux = aux.getSigEnlace();
+            }
+            aux = nodo.getPrimerEnlace();
+            while (aux != null) {
+                listarArcosAux(aux.getVertice(), visitados, lista);
+                aux = aux.getSigEnlace();
+            }
+        }
+        return visitados;
+    }
+
+    public void vaciar(){
+        inicio = null;
+    }
+
+    public boolean esVacio(){
+        return inicio == null;
+    }
 }

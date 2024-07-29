@@ -17,7 +17,7 @@ public class menuPartidos {
     public static void menu(TablaHash tablaPartidos, Avl arbolEquipos, Grafo ciudades){
         int opcion = -1;
         do {
-            System.out.println("Ingrese la opcion deseada");
+            System.out.println("\nIngrese la opcion deseada");
             System.out.println("1. Agregar Partido");
             System.out.println("2. Buscar partido");
             System.out.println("3. Mostrar todos los partidos");
@@ -159,7 +159,7 @@ public class menuPartidos {
     private static Equipo solicitarEquipo(Avl equipos){
         Equipo equipo = null;
         do {
-            equipo = menuEquipos.buscarEquipo(sc.nextLine().toLowerCase(), equipos);
+            equipo = menuEquipos.buscarEquipo(sc.nextLine().toLowerCase().trim(), equipos);
             if (equipo == null) {
                 System.out.println("Equipo no encontrado, intente de nuevo");
             }
@@ -228,7 +228,7 @@ public class menuPartidos {
         Ciudad ciudad = null;
         do {
             try {
-                String nombreCiudad = sc.nextLine();
+                String nombreCiudad = sc.nextLine().toLowerCase().trim();
                 if (nombreCiudad.equals("")) {
                     System.out.println("Ingrese un nombre valido");
                 }else{
@@ -245,7 +245,7 @@ public class menuPartidos {
         String estadio = "";
         do {
             try {
-                estadio = sc.nextLine();
+                estadio = sc.nextLine().toLowerCase().trim();
                 if (estadio.equals("")) {
                     System.out.println("Ingrese un nombre valido");
                 }

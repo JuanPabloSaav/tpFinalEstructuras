@@ -13,7 +13,7 @@ public class menuEquipos {
     public static void menu(Avl arbolEquipos) {
         int opcion = -1;
         do {
-            System.out.println("Ingrese la opcion deseada");
+            System.out.println("\nIngrese la opcion deseada");
             System.out.println("1. Agregar Equipo");
             System.out.println("2. Buscar Equipo");
             System.out.println("3. Buscar en rango");

@@ -21,10 +21,17 @@ public class Log {
         }
     }
 
+    /*
+     * Obtiene la ruta de la carpeta de documentos del usuario.
+     * Para los raros que tengan dos discos y lo tengan en A: (como yo).
+     */
     private static String documentsPath(){
         return FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath();
     }
 
+    /*
+     * Crea un archivo de registro en la carpeta de documentos del usuario.
+     */
     private static boolean createFile(){
         boolean created = false;
         try {
@@ -35,7 +42,7 @@ public class Log {
             
             System.out.println("Creando archivo de registro...");
             String dateFormat = date.format(fileDateFormat);
-            path += "/CopaAmericaLog/" + dateFormat + ".txt";
+            path += "/CopaAmericaLog/" + dateFormat + ".log";
             file = new File(path);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
@@ -48,6 +55,9 @@ public class Log {
         return created;
     }
 
+    /*
+     * Verifica si el archivo de registro existe.
+     */
     private static boolean fileExists(){
         boolean existe = false;
         if (new File(path).exists()) {
@@ -56,9 +66,16 @@ public class Log {
         return existe;
     }
 
+    /**
+     * Escribe un mensaje en el archivo de registro incluyendo fecha y hora del mensaje.
+     * @param message un String con el mensaje a escribir en el archivo de registro.
+     */
     public static void write(String message){
         if (fileExists()) {
-            writeAux(message);
+            LocalDateTime date = LocalDateTime.now();
+            DateTimeFormatter fileDateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+            String dateTime = date.format(fileDateFormat);
+            writeAux("["+dateTime+"]"+message);
         }else{
             System.out.println("El archivo de registro fue borrado o movido de lugar.");
             System.out.println("Creando nuevo archivo de registro...");
@@ -68,6 +85,9 @@ public class Log {
         }
     }
 
+    /*
+     * El autentico metodo encargado de escribir en el archivo de registro.
+     */
     private static void writeAux(String message){
         if (writer != null) {
             try {

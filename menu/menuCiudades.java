@@ -14,12 +14,7 @@ public class menuCiudades {
     public static void menu(Grafo ciudades){
         int opcion = -1;
         do {
-            //TODO: podrias arreglar un poco los numeros de las opciones, no se, ponerlos en orden o algo asi para que no parezca que los has puesto al azar 
-            //(esto me lo tiro el copilot wtf) ah ahora no dice nada, que raro (esto tambien me lo tiro el copilot)
-            //TODO: borrar este comentario cuando se haya hecho lo anterior NO TE OLVIDES (esto tambien me lo tiro el copilot)
-            // pero pedile un metodo para buscar una ciudad en el menor tiempo y te tira una falopeada
-            // yo personalmente me quedaba con el algoritmo de dijkstra, pero bueno, cada loco con su tema (que tiraba el copilot wtf "cada loco con su tema" ful)
-            System.out.println("1. Agregar ciudad");
+            System.out.println("\n1. Agregar ciudad");
             System.out.println("2. Eliminar ciudad");
             System.out.println("3. Modificar ciudad");
             System.out.println("4. Buscar ciudad");
@@ -29,12 +24,10 @@ public class menuCiudades {
             System.out.println("8. Eliminar ruta");
             System.out.println("9. Modificar ruta");
             System.out.println("10. Listar ciudades");
-            //TODO: agregar una opcion para listar las rutas de una ciudad en particular
+            System.out.println("11. Mostrar rutas");
             System.out.println("0. Salir");
             try {
                 opcion = sc.nextInt();
-                // Nota: tener cuidado porque parece que hasNextLine() a veces espera un enter cuando no hay nada en el buffer
-                // tiene sentido? no, pero es lo que parece
                 if (sc.hasNextLine()) {
                     sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
                 }
@@ -75,6 +68,9 @@ public class menuCiudades {
                     break;
                 case 10: 
                     listarCiudades(ciudades);
+                    break;
+                case 11:
+                    mostrarRutas(ciudades);
                     break;
                 default:
                     break;
@@ -224,9 +220,13 @@ public class menuCiudades {
     public static void listarCiudades(Grafo ciudades){
         Lista lista = ciudades.listarVertices();
         int longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Ciudad ciudad = (Ciudad) lista.recuperar(i);
-            System.out.println(ciudad.getNombre());
+        if (longitud > 0) {
+            for (int i = 1; i <= longitud; i++) {
+                Ciudad ciudad = (Ciudad) lista.recuperar(i);
+                System.out.println(ciudad.getNombre());
+            }
+        }else{
+            System.out.println("No hay ciudades registradas");
         }
     }
 
@@ -413,9 +413,7 @@ public class menuCiudades {
     private static String solicitarCiudad(){
         String nombre = "";
         do {
-            if ( sc.hasNextLine() ) {
                 nombre = sc.nextLine().toLowerCase();
-            }
             if (nombre.equals("")) {
                 System.out.println("Ingrese una ciudad valida");
             }
@@ -431,6 +429,9 @@ public class menuCiudades {
                 System.out.println("1. Sí");
                 System.out.println("2. No");
                 opcion = sc.nextInt();
+                if (sc.hasNextLine()) {
+                    sc.nextLine(); // Vaciar el buffer si hay una línea pendiente
+                }
                 switch (opcion) {
                     case 1:
                         respuesta = true;
@@ -472,6 +473,21 @@ public class menuCiudades {
             sc.next(); // Vaciar el buffer si hay una línea pendiente
         }
         return tiempo;
+    }
+
+    public static void mostrarRutas(Grafo ciudades){
+        Lista lista = ciudades.listarArcos();
+        int longitud = lista.longitud();
+        if (longitud > 0) {
+            for (int i = 1; i <= longitud; i++) {
+                Object[] arco = (Object[]) lista.recuperar(i);
+                System.out.println("Origen: " + ((Ciudad) arco[0]).getNombre() 
+                + " Destino: " + ((Ciudad) arco[1]).getNombre() 
+                + " Tiempo: " + (double) arco[2]);
+            }
+        }else{
+            System.out.println("No hay rutas registradas");
+        }
     }
 
 

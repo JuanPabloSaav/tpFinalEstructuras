@@ -89,11 +89,13 @@ public class mainSystem{
         int opcion = -1;
         do {
             try {
-                System.out.println("Ingrese la opcion deseada");
+                System.out.println("\nIngrese la opcion deseada");
                 System.out.println("1. Menu de Ciudades");
                 System.out.println("2. Menu de Equipos");
                 System.out.println("3. Menu de Partidos");
-                System.out.println("4. Mostrar todas las estructuras");
+                System.out.println("4. DEBUG: Mostrar todas las estructuras");
+                System.out.println("5. DEBUG: Destruir estructuras (revienta medio sistema)");
+                System.out.println("6. DEBUG: Volver a llamar a la carga de archivo");
                 System.out.println("0. Salir");
 
                 opcion = sc.nextInt();
@@ -109,6 +111,14 @@ public class mainSystem{
                         break;
                     case 4:
                         mostrarEstructuras(equipos, ciudades, partidos);
+                        break;
+                    case 5:
+                        equipos.vaciar();
+                        ciudades.vaciar();
+                        partidos.vaciar();
+                        break;
+                    case 6:
+                        inicializarEstructuras(equipos, ciudades, partidos);
                         break;
                     case 0:
                         System.out.println("Saliendo del sistema...");
@@ -149,9 +159,9 @@ public class mainSystem{
                         case "E":
                             try {
                                 Log.write("Añadiendo Equipo: " + data[0]);
-                                data[0] = data[0].replaceFirst("\\s+", "");
-                                data[1] = data[1].replaceFirst("\\s+", "");
-                                data[2] = data[2].replaceFirst("\\s+", "");
+                                data[0] = data[0].trim();
+                                data[1] = data[1].trim();
+                                data[2] = data[2].trim();
                                 Equipo equipo = new Equipo(
                                     data[1].toLowerCase(),//ApellidoTecnico
                                     data[2].toLowerCase(),//grupoInicial
@@ -166,9 +176,9 @@ public class mainSystem{
                         case "C":
                             try {
                                 Log.write("Añadiendo Ciudad: " + data[0]);
-                                data[0] = data[0].replaceFirst("\\s+", "");
-                                data[1] = data[1].replaceFirst("\\s+", "");
-                                data[2] = data[2].replaceFirst("\\s+", "");
+                                data[0] = data[0].trim();
+                                data[1] = data[1].trim();
+                                data[2] = data[2].trim();
                                 Ciudad ciudad = new Ciudad(
                                     data[0].toLowerCase(),//nombre
                                     Boolean.parseBoolean(data[1]),//alojamiento
@@ -182,13 +192,13 @@ public class mainSystem{
                             break;
                         case "P":
                             try {
-                                data[0] = data[0].replaceFirst("\\s+", "");
-                                data[1] = data[1].replaceFirst("\\s+", "");
-                                data[2] = data[2].replaceFirst("\\s+", "");
-                                data[3] = data[3].replaceFirst("\\s+", "");
-                                data[4] = data[4].replaceFirst("\\s+", "");
-                                data[5] = data[5].replaceFirst("\\s+", "");
-                                data[6] = data[6].replaceFirst("\\s+", "");
+                                data[0] = data[0].trim();
+                                data[1] = data[1].trim();
+                                data[2] = data[2].trim();
+                                data[3] = data[3].trim();
+                                data[4] = data[4].trim();
+                                data[5] = data[5].trim();
+                                data[6] = data[6].trim();
                                 Object[] tempPartido = {
                                     data[0].toLowerCase(), //eq1
                                     data[1].toLowerCase(), //eq2
@@ -205,9 +215,9 @@ public class mainSystem{
                             break;
                         case "R":
                             try {
-                                data[0] = data[0].replaceFirst("\\s+", "");
-                                data[1] = data[1].replaceFirst("\\s+", "");
-                                data[2] = data[2].replaceFirst("\\s+", "");
+                                data[0] = data[0].trim();
+                                data[1] = data[1].trim();
+                                data[2] = data[2].trim();
                                 Object[] tempRuta = {
                                     data[0].toLowerCase(),//ciudad1
                                     data[1].toLowerCase(),//ciudad2
@@ -342,6 +352,15 @@ public class mainSystem{
                 + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
                 rangos.eliminar(1);
             }
+        }
+
+        Lista lista = ciudades.listarArcos();
+        longitud = lista.longitud();
+        for (int i = 1; i <= longitud; i++) {
+            Object[] arco = (Object[]) lista.recuperar(i);
+            System.out.println("Origen: " + ((Ciudad) arco[0]).getNombre() 
+            + " Destino: " + ((Ciudad) arco[1]).getNombre() 
+            + " Tiempo: " + (double) arco[2]);
         }
         System.out.println("");
     }
