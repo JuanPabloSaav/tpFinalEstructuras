@@ -1,8 +1,8 @@
 package estructuras.conjuntistas;
 
 import estructuras.lineales.Lista;
-import objetos.dominioPartido;
-import objetos.rangoPartido;
+import objetos.Dominio;
+import objetos.Rango;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ public class TablaHash {
         primo = getPrimoCercano(size);
     }
 
-    public boolean asociar(dominioPartido dominio, rangoPartido rango){
+    public boolean asociar(Dominio dominio, Rango rango){
         boolean exito = false;
         NodoHashMapeo elemento = new NodoHashMapeo(dominio, rango, null);
         int pos = dominio.getClave() % primo;
@@ -64,7 +64,7 @@ public class TablaHash {
         return exito;
     } */
 
-    public Lista obtenerValor(dominioPartido dominio){
+    public Lista obtenerValor(Dominio dominio){
         Lista lista = new Lista();
         int pos = dominio.getClave() % primo;
         NodoHashMapeo bucket = tabla[pos];

@@ -1,6 +1,6 @@
 package objetos;
 
-public class dominioPartido {
+public class Dominio {
     private Equipo eq1;
     private Equipo eq2;
     // se almacena la clave para mejorar la eficiencia (total no la voy a cambiar)
@@ -12,7 +12,7 @@ public class dominioPartido {
      * @param eq1 El primer equipo
      * @param eq2 El segundo equipo
      */
-    public dominioPartido(Equipo eq1, Equipo eq2){
+    public Dominio(Equipo eq1, Equipo eq2){
         this.eq1 = eq1;
         this.eq2 = eq2;
         // se genera la clave y se almacena en la instancia para mejorar la eficiencia
@@ -51,7 +51,7 @@ public class dominioPartido {
         return eq2;
     }
 
-    public boolean equals(dominioPartido dominio){
+    public boolean equals(Dominio dominio){
         return this.clave == dominio.getClave();
     }
 

@@ -1,15 +1,15 @@
 package estructuras.conjuntistas;
 
-import objetos.dominioPartido;
-import objetos.rangoPartido;
+import objetos.Dominio;
+import objetos.Rango;
 import estructuras.lineales.Lista;
 
 public class NodoHashMapeo {
-    private dominioPartido dominio;
+    private Dominio dominio;
     private Lista rango = new Lista();
     private NodoHashMapeo enlace;
 
-    public NodoHashMapeo(dominioPartido dominio, rangoPartido rango, NodoHashMapeo enlace){
+    public NodoHashMapeo(Dominio dominio, Rango rango, NodoHashMapeo enlace){
         this.dominio = dominio;
         //podria solicitar la lista en vez del rango pero no creo que en al primera creacion de un
         //NodoHash se tenga una lista de rangos > 1 elemento
@@ -18,11 +18,11 @@ public class NodoHashMapeo {
         this.enlace = enlace;
     }
 
-    public dominioPartido getDominio() {
+    public Dominio getDominio() {
         return dominio;
     }
 
-    public void setDominio(dominioPartido dominio) {
+    public void setDominio(Dominio dominio) {
         this.dominio = dominio;
     }
 
@@ -34,7 +34,7 @@ public class NodoHashMapeo {
         this.rango = rango;
     }
     
-    public void agregarRango(rangoPartido rango){
+    public void agregarRango(Rango rango){
         //pos 1 para que siempre este primero el rango mas reciente
         this.rango.insertar(rango, 1);
     }

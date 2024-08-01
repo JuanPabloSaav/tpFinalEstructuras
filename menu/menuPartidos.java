@@ -5,8 +5,8 @@ import estructuras.conjuntistas.TablaHash;
 import estructuras.lineales.Lista;
 import logSystem.Log;
 import estructuras.grafo.Grafo;
-import objetos.dominioPartido;
-import objetos.rangoPartido;
+import objetos.Dominio;
+import objetos.Rango;
 import objetos.Equipo;
 import objetos.Ciudad;
 import java.util.Scanner;
@@ -104,7 +104,7 @@ public class menuPartidos {
         eq1.setGolesEnContra(golesEq2+eq1.getGolesEnContra());
         eq2.setGolesAFavor(golesEq2+eq2.getGolesAFavor());
         eq2.setGolesEnContra(golesEq1+eq2.getGolesEnContra());
-        System.out.println(tablaPartidos.asociar(new dominioPartido(eq1, eq2), new rangoPartido(ronda, ciudad, estadio,golesEq1, golesEq2))? 
+        System.out.println(tablaPartidos.asociar(new Dominio(eq1, eq2), new Rango(ronda, ciudad, estadio,golesEq1, golesEq2))? 
         "Partido agregado con exito": "No se pudo agregar el partido");
     }
 
@@ -121,14 +121,14 @@ public class menuPartidos {
             eq2 = aux;
         }
 
-        dominioPartido dp = new dominioPartido(eq1, eq2);
+        Dominio dp = new Dominio(eq1, eq2);
         Lista listaPartidos = tablaPartidos.obtenerValor(dp);
         int longitud = listaPartidos.longitud();
         if (longitud > 0) {
             System.out.println("Se encontraron los siguientes partidos");
             System.out.println(eq1.getPais().toUpperCase() + " vs " + eq2.getPais().toUpperCase());
             for (int i = 1; i <= longitud; i++) {
-                rangoPartido rp = (rangoPartido) listaPartidos.recuperar(i);
+                Rango rp = (Rango) listaPartidos.recuperar(i);
                 System.out.println(rp.toString());
             }
         }else{
@@ -141,11 +141,11 @@ public class menuPartidos {
         int longitud = listaPartidos.longitud();
         for (int i = 1; i <= longitud; i++) {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
-            dominioPartido domPartido = (dominioPartido) partido[0];
+            Dominio domPartido = (Dominio) partido[0];
             Lista rangos = (Lista) partido[1];
             System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
             while (!rangos.esVacia()) {
-                rangoPartido rango = (rangoPartido) rangos.recuperar(1);
+                Rango rango = (Rango) rangos.recuperar(1);
                 System.out.println("Ronda: "+ rango.getRonda() 
                 + " - Ciudad: "+ rango.getCiudad().getNombre() 
                 + " - Estadio: "+ rango.getNombreEstadio() 

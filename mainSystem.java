@@ -6,8 +6,8 @@ import estructuras.lineales.Lista;
 
 import objetos.Ciudad;
 import objetos.Equipo;
-import objetos.dominioPartido;
-import objetos.rangoPartido;
+import objetos.Dominio;
+import objetos.Rango;
 
 import logSystem.Log;
 import menu.menuPartidos;
@@ -68,11 +68,11 @@ public class mainSystem{
         longitud = listaPartidos.longitud();
         for (int i = 1; i <= longitud; i++) {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
-            dominioPartido domPartido = (dominioPartido) partido[0];
+            Dominio domPartido = (Dominio) partido[0];
             Lista rangos = (Lista) partido[1];
             Log.write(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
             while (!rangos.esVacia()) {
-                rangoPartido rango = (rangoPartido) rangos.recuperar(1);
+                Rango rango = (Rango) rangos.recuperar(1);
                 Log.write("Ronda: "+ rango.getRonda() 
                 + " - Ciudad: "+ rango.getCiudad().getNombre() 
                 + " - Estadio: "+ rango.getNombreEstadio() 
@@ -299,8 +299,8 @@ public class mainSystem{
                             equipo2.setPuntosGanados(1+equipo2.getPuntosGanados());
                         }
                     }
-                    dominioPartido domPartido = new dominioPartido(equipo1, equipo2);
-                    rangoPartido rango = new rangoPartido(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
+                    Dominio domPartido = new Dominio(equipo1, equipo2);
+                    Rango rango = new Rango(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
                     partidos.asociar(domPartido, rango);
                     Log.write("Partido añadido");
                 }
@@ -339,11 +339,11 @@ public class mainSystem{
         longitud = listaPartidos.longitud();
         for (int i = 1; i <= longitud; i++) {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
-            dominioPartido domPartido = (dominioPartido) partido[0];
+            Dominio domPartido = (Dominio) partido[0];
             Lista rangos = (Lista) partido[1];
             System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
             while (!rangos.esVacia()) {
-                rangoPartido rango = (rangoPartido) rangos.recuperar(1);
+                Rango rango = (Rango) rangos.recuperar(1);
                 System.out.println("Ronda: "+ rango.getRonda() 
                 + " - Ciudad: "+ rango.getCiudad().getNombre() 
                 + " - Estadio: "+ rango.getNombreEstadio() 
