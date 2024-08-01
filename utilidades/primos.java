@@ -30,6 +30,12 @@ public class primos {
         return esPrimo;
     }
 
+
+    /**
+     * Metodo que filtra la criba de eratostenes y devuelve el primo mas cercano al numero dado
+     * @param numero numero al que se le buscara el primo mas cercano
+     * @return primo mas cercano al numero dado
+     */
     public static int getPrimoCercano(int numero){
         boolean[] numeroPrimos = cribaDeEratostenes(numero);
         while (!numeroPrimos[numero] && numero > 2) {

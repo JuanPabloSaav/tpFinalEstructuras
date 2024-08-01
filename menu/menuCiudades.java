@@ -189,7 +189,7 @@ public class menuCiudades {
             nombre = solicitarCiudad();
             ciudad = buscarCiudad(ciudades, nombre);
             if (ciudad != null) {
-                System.out.println("Nombre: " + ciudad.getNombre());
+                System.out.println("Nombre: " + ciudad.getNombre().toUpperCase());
                 System.out.println("Alojamiento disponible: " + (ciudad.getAlojamientoDisponible()? "Sí": "No"));
                 System.out.println("Es sede: " + (ciudad.getEsSede()? "Sí": "No"));
             } else {
@@ -257,10 +257,10 @@ public class menuCiudades {
             System.out.println("El camino más corto es:");
             for (int i = 1; i < longitud; i++) {
                 Ciudad ciudad = (Ciudad) camino.recuperar(i);
-                System.out.print(ciudad.getNombre() + " -> ");
+                System.out.print(ciudad.getNombre().toUpperCase() + " -> ");
             }
             Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
-            System.out.println(ciudad.getNombre());
+            System.out.println(ciudad.getNombre().toUpperCase());
         }else{
             System.out.println("No se encontró un camino");
         }
@@ -280,10 +280,10 @@ public class menuCiudades {
                 System.out.println("El camino de menor tiempo es:");
                 for (int i = 1; i < longitud; i++) {
                     Ciudad ciudad = (Ciudad) camino.recuperar(i);
-                    System.out.print(ciudad.getNombre() + " -> ");
+                    System.out.print(ciudad.getNombre().toUpperCase() + " -> ");
                 }
                 Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
-                System.out.println(ciudad.getNombre());
+                System.out.println(ciudad.getNombre().toUpperCase());
             }else{
                 System.out.println("No se encontró un camino");
             }
@@ -481,8 +481,8 @@ public class menuCiudades {
         if (longitud > 0) {
             for (int i = 1; i <= longitud; i++) {
                 Object[] arco = (Object[]) lista.recuperar(i);
-                System.out.println("Origen: " + ((Ciudad) arco[0]).getNombre() 
-                + " Destino: " + ((Ciudad) arco[1]).getNombre() 
+                System.out.println("Origen: " + ((Ciudad) arco[0]).getNombre().toUpperCase() 
+                + " Destino: " + ((Ciudad) arco[1]).getNombre().toUpperCase()
                 + " Tiempo: " + (double) arco[2]);
             }
         }else{

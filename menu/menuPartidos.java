@@ -92,6 +92,7 @@ public class menuPartidos {
 
         System.out.println("Ingrese el nombre del estadio donde se jugo el partido");
         estadio = solicitarEstadio();
+
         if (golesEq1 > golesEq2) {
             eq1.setPuntosGanados(3+eq1.getPuntosGanados());
         }else if (golesEq1 < golesEq2) {
@@ -100,10 +101,12 @@ public class menuPartidos {
             eq1.setPuntosGanados(1+eq1.getPuntosGanados());
             eq2.setPuntosGanados(1+eq2.getPuntosGanados());
         }
+
         eq1.setGolesAFavor(golesEq1+eq1.getGolesAFavor());
         eq1.setGolesEnContra(golesEq2+eq1.getGolesEnContra());
         eq2.setGolesAFavor(golesEq2+eq2.getGolesAFavor());
         eq2.setGolesEnContra(golesEq1+eq2.getGolesEnContra());
+
         System.out.println(tablaPartidos.asociar(new Dominio(eq1, eq2), new Rango(ronda, ciudad, estadio,golesEq1, golesEq2))? 
         "Partido agregado con exito": "No se pudo agregar el partido");
     }
@@ -115,6 +118,7 @@ public class menuPartidos {
         eq1 = solicitarEquipo(arbolEquipos);
         System.out.println("Ingrese el pais del segundo equipo");
         eq2 = solicitarEquipo(arbolEquipos);
+
         if (eq1.compareTo(eq2) > 0) {
             Equipo aux = eq1;
             eq1 = eq2;
@@ -143,12 +147,12 @@ public class menuPartidos {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
             Dominio domPartido = (Dominio) partido[0];
             Lista rangos = (Lista) partido[1];
-            System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
+            System.out.println(domPartido.getEq1().getPais().toUpperCase() + " vs " + domPartido.getEq2().getPais().toUpperCase());
             while (!rangos.esVacia()) {
                 Rango rango = (Rango) rangos.recuperar(1);
                 System.out.println("Ronda: "+ rango.getRonda() 
-                + " - Ciudad: "+ rango.getCiudad().getNombre() 
-                + " - Estadio: "+ rango.getNombreEstadio() 
+                + " - Ciudad: "+ rango.getCiudad().getNombre().toUpperCase() 
+                + " - Estadio: "+ rango.getNombreEstadio().toUpperCase() 
                 + " - Goles Eq1: " + Integer.toString(rango.getGolesEq1()) 
                 + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
                 rangos.eliminar(1);

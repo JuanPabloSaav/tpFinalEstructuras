@@ -17,6 +17,12 @@ public class TablaHash {
         primo = getPrimoCercano(size);
     }
 
+    /**
+     * Asocia un dominio con un rango en la tabla hash mapeo con magia negra
+     * @param dominio un objeto de tipo Dominio
+     * @param rango un objeto de tipo Rango
+     * @return true si se pudo asociar el dominio con el rango, false en caso contrario
+     */
     public boolean asociar(Dominio dominio, Rango rango){
         boolean exito = false;
         NodoHashMapeo elemento = new NodoHashMapeo(dominio, rango, null);
@@ -64,6 +70,11 @@ public class TablaHash {
         return exito;
     } */
 
+    /**
+     * Obtiene todos los rangos asociados a un dominio
+     * @param dominio un objeto de tipo Dominio
+     * @return un objeto de tipo Lista con los rangos asociados al dominio
+     */
     public Lista obtenerValor(Dominio dominio){
         Lista lista = new Lista();
         int pos = dominio.getClave() % primo;
@@ -78,6 +89,10 @@ public class TablaHash {
         return lista;
     }
 
+    /**
+     * Obtiene todos los dominios de la tabla hash mapeo
+     * @return un objeto de tipo Lista con los dominios de la tabla hash mapeo
+     */
     public Lista obtenerDominios(){
         Lista lista = new Lista();
         int longitud = 1;
@@ -92,12 +107,19 @@ public class TablaHash {
         return lista;
     }
 
+    /**
+     * Elimina un dominio de la tabla hash mapeo
+     */
     public void vaciar(){
         for (int i = 0; i < tamaño; i++) {
             tabla[i] = null;
         }
     }
 
+    /**
+     * Verifica si la tabla hash mapeo esta vacia
+     * @return true si la tabla hash mapeo esta vacia, false en caso contrario
+     */
     public boolean esVacia(){
         boolean vacio = true;
         for (int i = 0; i < tamaño; i++) {
@@ -111,9 +133,9 @@ public class TablaHash {
 
 
     /**
-     * 
-     * @param n
-     * @return
+     * Metodo que devuelve un arreglo de booleanos con los numeros primos hasta n
+     * @param n limite de los numeros primos
+     * @return arreglo de booleanos con los numeros primos hasta n
      */
     private static boolean[] cribaDeEratostenes(int n){
         boolean[] esPrimo = new boolean[n];
@@ -153,6 +175,10 @@ public class TablaHash {
         return numero;
     }
 
+    /**
+     * Metodo que permite listar los elementos de la tabla hash mapeo
+     * @return un objeto de tipo Lista con los elementos de la tabla hash mapeo
+     */
     public Lista listar(){
         Lista lista = new Lista();
         for (int i = 0; i < tamaño; i++) {

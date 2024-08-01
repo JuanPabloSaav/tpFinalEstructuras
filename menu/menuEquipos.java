@@ -66,7 +66,8 @@ public class menuEquipos {
         grupo = solicitarGrupo();
         pais = solicitarPais();
 
-        System.out.println(arbolEquipos.insertar(new Equipo(apellidoTecnico, grupo, pais))? "Equipo agregado" : "No se pudo agregar el equipo");
+        System.out.println(arbolEquipos.insertar(new Equipo(apellidoTecnico, grupo, pais))? 
+        "Equipo agregado" : "No se pudo agregar el equipo");
     }
 
     public static Equipo buscarEquipo(String nombrePais, Avl arbolEquipos) {
@@ -92,7 +93,7 @@ public class menuEquipos {
     private static void solicitarEquipo(Avl arbolEquipos) {
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
-        System.out.println("Equipo " + equipo.getPais() + " encontrado:");
+        System.out.println("\nEquipo " + equipo.getPais().toUpperCase() + " encontrado:");
         System.out.println("Puntos ganados: " + equipo.getPuntosGanados() +
                 "\nGoles a favor: " + equipo.getGolesAFavor() +
                 "\nGoles en contra: " + equipo.getGolesEnContra());
@@ -114,7 +115,7 @@ public class menuEquipos {
         int longitud = lista.longitud();
         for (int i = 1; i <= longitud; i++) {
             Equipo equipo = (Equipo) lista.recuperar(i);
-            System.out.println("Equipo: " + equipo.getPais() + "\n" +
+            System.out.println("\nEquipo: " + equipo.getPais().toUpperCase() + "\n" +
                     "Puntos ganados: " + equipo.getPuntosGanados() + "\n" +
                     "Goles a favor: " + equipo.getGolesAFavor() + "\n" +
                     "Goles en contra: " + equipo.getGolesEnContra());
@@ -126,7 +127,7 @@ public class menuEquipos {
         int longitud = lista.longitud();
         for (int i = 1; i <= longitud; i++) {
             Equipo equipo = (Equipo) lista.recuperar(i);
-            System.out.println("Equipo: " + equipo.getPais());
+            System.out.println("Equipo: " + equipo.getPais().toUpperCase());
         }
     }
 
@@ -134,7 +135,8 @@ public class menuEquipos {
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
         if (equipo != null) {
-            System.out.println(arbolEquipos.eliminar(equipo)? "Equipo eliminado" : "No se pudo eliminar el equipo");
+            System.out.println(arbolEquipos.eliminar(equipo)? 
+            "Equipo eliminado" : "No se pudo eliminar el equipo");
         } else {
             System.out.println("No se encontro el equipo");
         }
@@ -144,17 +146,17 @@ public class menuEquipos {
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
         if (equipo != null) {
-            System.out.println("Equipo " + equipo.getPais() 
-            + "\nTecnico: " + equipo.getApellidoTecnico() 
-            + "\nGrupo: " + equipo.getGrupo() 
-            + "\nPuntos ganados: " + equipo.getPuntosGanados() 
+            System.out.println("\nEquipo " + equipo.getPais().toUpperCase()
+            + "\nTecnico: " + equipo.getApellidoTecnico().toUpperCase()
+            + "\nGrupo: " + equipo.getGrupo().toUpperCase() 
+            + "\nPuntos ganados: " + equipo.getPuntosGanados()
             + "\nGoles a favor: " + equipo.getGolesAFavor() 
             + "\nGoles en contra: " + equipo.getGolesEnContra());
 
             int opcion = -1;
             try {
                 do {
-                    System.out.println("Ingrese la opcion deseada");
+                    System.out.println("\nIngrese la opcion deseada");
                     System.out.println("1. Modificar apellido del tecnico");
                     System.out.println("2. Modificar grupo");
                     System.out.println("3. Modificar pais");

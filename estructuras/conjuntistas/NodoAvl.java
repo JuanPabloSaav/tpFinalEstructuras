@@ -22,26 +22,50 @@ public class NodoAvl {
         recalcularAltura();
     }
 
+    /**
+     * Metodo que devuelve el elemento del nodo
+     * @return elemento del nodo
+     */
     public Comparable getElem(){
         return this.elem;
     }
 
+    /**
+     * Metodo que devuelve el hijo izquierdo del nodo
+     * @return hijo izquierdo del nodo
+     */
     public NodoAvl getIzquierdo(){
         return this.izquierdo;
     }
 
+    /**
+     * Metodo que devuelve el hijo derecho del nodo
+     * @return hijo derecho del nodo
+     */
     public NodoAvl getDerecho(){
         return this.derecho;
     }
 
+    /**
+     * Metodo que devuelve la altura del nodo
+     * @return altura del nodo
+     */
     public int getAltura(){
         return this.altura;
     }
 
+    /**
+     * Metodo que permite modificar el elemento del nodo
+     * @param elem elemento del nodo
+     */
     public void setElem(Comparable elem){
         this.elem = elem;
     }
 
+    /**
+     * Metodo que permite modificar el hijo izquierdo del nodo
+     * @param izquierdo hijo izquierdo del nodo
+     */
     public void setIzquierdo(NodoAvl izquierdo){
         this.izquierdo = izquierdo;
     }
