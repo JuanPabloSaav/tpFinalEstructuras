@@ -1,15 +1,14 @@
 package estructuras.conjuntistas;
 
-import objetos.Dominio;
-import objetos.Rango;
+
 import estructuras.lineales.Lista;
 
 public class NodoHashMapeo {
-    private Dominio dominio;
+    private Object dominio;
     private Lista rango = new Lista();
     private NodoHashMapeo enlace;
 
-    public NodoHashMapeo(Dominio dominio, Rango rango, NodoHashMapeo enlace){
+    public NodoHashMapeo(Object dominio, Object rango, NodoHashMapeo enlace){
         this.dominio = dominio;
         //podria solicitar la lista en vez del rango pero no creo que en al primera creacion de un
         //NodoHash se tenga una lista de rangos > 1 elemento
@@ -22,7 +21,7 @@ public class NodoHashMapeo {
      * Metodo que permite obtener el dominio del nodo
      * @return un objeto de tipo Dominio
      */
-    public Dominio getDominio() {
+    public Object getDominio() {
         return dominio;
     }
 
@@ -30,7 +29,7 @@ public class NodoHashMapeo {
      * Metodo que permite modificar el dominio del nodo
      * @param dominio un objeto de tipo Dominio
      */
-    public void setDominio(Dominio dominio) {
+    public void setDominio(Object dominio) {
         this.dominio = dominio;
     }
 
@@ -54,7 +53,7 @@ public class NodoHashMapeo {
      * Metodo que permite agregar un rango a la lista de rangos del nodo
      * @param rango un objeto de tipo Rango
      */
-    public void agregarRango(Rango rango){
+    public void agregarRango(Object rango){
         //pos 1 para que siempre este primero el rango mas reciente
         this.rango.insertar(rango, 1);
     }
@@ -80,8 +79,11 @@ public class NodoHashMapeo {
      * @param nodo un nodoHashMapeo
      * @return true si los dominios son iguales, false en caso contrario
      */
-    public boolean equals(NodoHashMapeo nodo){
-        return dominio.equals(nodo.getDominio());
+    //TODO: probar
+    public boolean equals(Object nodo){
+        NodoHashMapeo nodoHash = (NodoHashMapeo) nodo;
+        Object dom = nodoHash.getDominio();
+        return dominio.equals(dom);
     }
 
     /**

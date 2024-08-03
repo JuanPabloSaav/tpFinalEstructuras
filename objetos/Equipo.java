@@ -77,6 +77,14 @@ public class Equipo implements Comparable<Equipo>{
         return  "Pais:" + this.pais + "\nGrupo: " + this.grupo +"\nApellido del técnico: " + this.apellidoTecnico + "\nPuntos ganados: " + this.puntosGanados + "\nGoles a favor: " + this.golesAFavor + "\nGoles en contra: " + this.golesEnContra+"\n";
     }
 
+    public boolean equals(Object obj){
+        if (obj instanceof Equipo){
+            Equipo equipo = (Equipo) obj;
+            return this.pais.equals(equipo.getPais());
+        }
+        return false;
+    }
+
     @Override
     public int compareTo(Equipo equipo){
         return this.pais.compareTo(equipo.getPais());
@@ -85,9 +93,6 @@ public class Equipo implements Comparable<Equipo>{
     @Override
     public int hashCode(){
         int suma = 0;
-        for (int i = 0; i < this.grupo.length(); i++){
-            suma += (int) this.grupo.charAt(i);
-        }
         for (int i = 0; i < this.pais.length(); i++){
             suma += (int) this.pais.charAt(i);
         }

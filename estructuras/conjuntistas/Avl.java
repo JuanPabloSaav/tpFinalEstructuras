@@ -43,6 +43,7 @@ public class  Avl {
                 }
                 exito = true;
             }
+            nodo.recalcularAltura();
         }
         return exito;
     }
@@ -61,9 +62,11 @@ public class  Avl {
             int comparacion = elem.compareTo(nodo.getElem());
             if (comparacion < 0) {
                 nodo.setIzquierdo(eliminarAux(nodo.getIzquierdo(), elem, eliminado));
-                nodo.setIzquierdo(nodo.getDerecho());
+                nodo.recalcularAltura();
+                nodo.setIzquierdo(reBalanceo(nodo.getIzquierdo()));
             }else if(comparacion > 0){
                 nodo.setDerecho(eliminarAux(nodo.getDerecho(), elem, eliminado));
+                nodo.recalcularAltura();
                 nodo.setDerecho(reBalanceo(nodo.getDerecho()));
             }else{
                 if (nodo.getIzquierdo() == null && nodo.getDerecho() == null) {
@@ -127,7 +130,7 @@ public class  Avl {
     private int altura(NodoAvl nodo){
         int altura = -1;
         if (nodo != null) {
-           nodo.recalcularAltura(); 
+           //nodo.recalcularAltura(); 
            altura = nodo.getAltura();
         }
         

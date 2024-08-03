@@ -78,10 +78,11 @@ public class Lista {
         int pos = -1;
         int i = 1;
         int limit = longitud();
-        while (i < limit) {
+        boolean encontrado = false;
+        while (i < limit && !encontrado) {
             if (aux.getDato().toString().equals(elemento.toString())) {
                 pos = i;
-                break;
+                encontrado = true;
             }
             aux = aux.getEnlace();
             i++;
@@ -111,6 +112,10 @@ public class Lista {
         this.cabecera = null;
     }
 
+    /**
+     * Retorna un clon de la lista
+     * @return un objeto de tipo Lista
+     */
     public Lista clone(){
         Lista clon = new Lista();
         Nodo aux = this.cabecera;
@@ -124,14 +129,11 @@ public class Lista {
         return clon;
     }
 
+
     public String toString(){
         Nodo aux = this.cabecera;
         String cadena = "[";
         while (aux != null) {
-            if (aux.getEnlace() == null) {
-                cadena += aux.getDato();
-                break;
-            }
             cadena += aux.getDato().toString()+",";
             aux = aux.getEnlace();
         }

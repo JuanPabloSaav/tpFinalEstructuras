@@ -1,6 +1,6 @@
 package objetos;
 
-public class Rango {
+public class PartidoDatos {
     private int golesEq1;
     private int golesEq2;
     private String nombreEstadio;
@@ -13,7 +13,7 @@ public class Rango {
      * @param golesEq2 Los goles del equipo 2
      * @param ronda La ronda del partido
      */
-    public Rango(String ronda, Ciudad ciudad, String nombreEstadio, int golesEq1, int golesEq2){
+    public PartidoDatos(String ronda, Ciudad ciudad, String nombreEstadio, int golesEq1, int golesEq2){
         this.golesEq1 = golesEq1;
         this.golesEq2 = golesEq2;
         this.nombreEstadio = nombreEstadio;

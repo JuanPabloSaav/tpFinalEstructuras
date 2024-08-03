@@ -10,16 +10,14 @@ public class NodoAvl {
 
     public NodoAvl(Comparable elem){
         this.elem = elem;
-        izquierdo = null;
-        derecho = null;
-        recalcularAltura();
+        altura = 0;
     }
 
     public NodoAvl(Comparable elem, NodoAvl izquierdo, NodoAvl derecho){
         this.elem = elem;
         this.izquierdo = izquierdo;
         this.derecho = derecho;
-        recalcularAltura();
+        altura = 0;
     }
 
     /**
@@ -75,39 +73,15 @@ public class NodoAvl {
     }
 
     public void recalcularAltura(){
-        int alturaIzquierdo = 0, alturaDerecho = 0;
+        int altIzq = -1;
+        int altDer = -1;
         if (izquierdo != null) {
-            alturaIzquierdo = recalcularAlturaAux(izquierdo, alturaIzquierdo);
-
+            altIzq = izquierdo.getAltura();
         }
         if (derecho != null) {
-            alturaDerecho = recalcularAlturaAux(derecho, alturaDerecho);
-
+            altDer = derecho.getAltura();
         }
-        if (alturaIzquierdo > alturaDerecho) {
-            this.altura = alturaIzquierdo;
-        }else{
-            this.altura = alturaDerecho;
-        }
-    }
-
-    private int recalcularAlturaAux(NodoAvl nodo, int alturaActual){
-        if (nodo != null) {
-            alturaActual++;
-            int alturaDerecho = 0, alturaIzquierdo = 0;
-            if (nodo.izquierdo != null) {
-                alturaIzquierdo = recalcularAlturaAux(nodo.izquierdo, alturaActual);
-            }
-            if (nodo.derecho != null) {
-                alturaDerecho = recalcularAlturaAux(nodo.derecho, alturaActual);
-            }
-            if (alturaIzquierdo > alturaDerecho) {
-                alturaActual += alturaIzquierdo;
-            }else{
-                alturaActual += alturaDerecho;
-            }
-        }
-        return alturaActual;
+        altura = Math.max(altIzq, altDer) + 1;
     }
 
     public String toString(){

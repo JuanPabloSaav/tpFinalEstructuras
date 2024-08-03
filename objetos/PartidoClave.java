@@ -1,10 +1,9 @@
 package objetos;
 
-public class Dominio {
+public class PartidoClave {
     private Equipo eq1;
     private Equipo eq2;
     // se almacena la clave para mejorar la eficiencia (total no la voy a cambiar)
-    private int clave;
 
     /**
      * Constructor de la clase dominioPartido que toma dos equipos, 
@@ -12,27 +11,9 @@ public class Dominio {
      * @param eq1 El primer equipo
      * @param eq2 El segundo equipo
      */
-    public Dominio(Equipo eq1, Equipo eq2){
+    public PartidoClave(Equipo eq1, Equipo eq2){
         this.eq1 = eq1;
         this.eq2 = eq2;
-        // se genera la clave y se almacena en la instancia para mejorar la eficiencia
-        clave = genClave();
-    }
-
-    /**
-     * Metodo que genera una clave unica para la instancia
-     * @return La clave generada de tipo int
-     */
-    private int genClave(){
-        return eq1.hashCode() + eq2.hashCode();
-    }
-
-    /**
-     * Metodo que retorna la clave de la instancia
-     * @return La clave de la instancia de tipo int
-     */
-    public int getClave(){
-        return clave;
     }
 
     /**
@@ -51,8 +32,17 @@ public class Dominio {
         return eq2;
     }
 
-    public boolean equals(Dominio dominio){
-        return this.clave == dominio.getClave();
+    public boolean equals(Object dominio){
+        boolean igual = false;
+        if (dominio != null && getClass() == dominio.getClass()) {
+            PartidoClave pk = (PartidoClave) dominio;
+            igual = this.eq1.equals(pk.eq1) && this.eq2.equals(pk.eq2);
+        }
+        return igual;
+    }
+
+    public int hashCode(){
+        return eq1.hashCode() + eq2.hashCode();
     }
 
 }

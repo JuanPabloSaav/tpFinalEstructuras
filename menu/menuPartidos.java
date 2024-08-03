@@ -5,8 +5,8 @@ import estructuras.conjuntistas.TablaHash;
 import estructuras.lineales.Lista;
 import logSystem.Log;
 import estructuras.grafo.Grafo;
-import objetos.Dominio;
-import objetos.Rango;
+import objetos.PartidoClave;
+import objetos.PartidoDatos;
 import objetos.Equipo;
 import objetos.Ciudad;
 import java.util.Scanner;
@@ -107,7 +107,7 @@ public class menuPartidos {
         eq2.setGolesAFavor(golesEq2+eq2.getGolesAFavor());
         eq2.setGolesEnContra(golesEq1+eq2.getGolesEnContra());
 
-        System.out.println(tablaPartidos.asociar(new Dominio(eq1, eq2), new Rango(ronda, ciudad, estadio,golesEq1, golesEq2))? 
+        System.out.println(tablaPartidos.asociar(new PartidoClave(eq1, eq2), new PartidoDatos(ronda, ciudad, estadio,golesEq1, golesEq2))? 
         "Partido agregado con exito": "No se pudo agregar el partido");
     }
 
@@ -125,15 +125,15 @@ public class menuPartidos {
             eq2 = aux;
         }
 
-        Dominio dp = new Dominio(eq1, eq2);
+        PartidoClave dp = new PartidoClave(eq1, eq2);
         Lista listaPartidos = tablaPartidos.obtenerValor(dp);
-        int longitud = listaPartidos.longitud();
-        if (longitud > 0) {
+        if (!listaPartidos.esVacia()) {
             System.out.println("Se encontraron los siguientes partidos");
             System.out.println(eq1.getPais().toUpperCase() + " vs " + eq2.getPais().toUpperCase());
-            for (int i = 1; i <= longitud; i++) {
-                Rango rp = (Rango) listaPartidos.recuperar(i);
+            while (!listaPartidos.esVacia()) {
+                PartidoDatos rp = (PartidoDatos) listaPartidos.recuperar(1);
                 System.out.println(rp.toString());
+                listaPartidos.eliminar(1);
             }
         }else{
             System.out.println("No se encontraron partidos");
@@ -145,11 +145,11 @@ public class menuPartidos {
         int longitud = listaPartidos.longitud();
         for (int i = 1; i <= longitud; i++) {
             Object[] partido = (Object[]) listaPartidos.recuperar(i);
-            Dominio domPartido = (Dominio) partido[0];
+            PartidoClave domPartido = (PartidoClave) partido[0];
             Lista rangos = (Lista) partido[1];
             System.out.println(domPartido.getEq1().getPais().toUpperCase() + " vs " + domPartido.getEq2().getPais().toUpperCase());
             while (!rangos.esVacia()) {
-                Rango rango = (Rango) rangos.recuperar(1);
+                PartidoDatos rango = (PartidoDatos) rangos.recuperar(1);
                 System.out.println("Ronda: "+ rango.getRonda() 
                 + " - Ciudad: "+ rango.getCiudad().getNombre().toUpperCase() 
                 + " - Estadio: "+ rango.getNombreEstadio().toUpperCase() 
@@ -237,6 +237,9 @@ public class menuPartidos {
                     System.out.println("Ingrese un nombre valido");
                 }else{
                     ciudad = menuCiudades.buscarCiudad(ciudades, nombreCiudad);
+                    if (ciudad == null) {
+                        System.out.println("Ciudad no encontrada, intente de nuevo");
+                    }
                 }
             } catch (Exception e) {
                 Log.write("Error al buscar la ciudad");

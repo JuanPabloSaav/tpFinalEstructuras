@@ -1,8 +1,6 @@
 package estructuras.conjuntistas;
 
 import estructuras.lineales.Lista;
-import objetos.Dominio;
-import objetos.Rango;
 
 import java.util.Arrays;
 
@@ -23,22 +21,31 @@ public class TablaHash {
      * @param rango un objeto de tipo Rango
      * @return true si se pudo asociar el dominio con el rango, false en caso contrario
      */
-    public boolean asociar(Dominio dominio, Rango rango){
+
+     //TODO: CAMBIAR A OBJECT
+    public boolean asociar(Object dominio, Object rango){
         boolean exito = false;
         NodoHashMapeo elemento = new NodoHashMapeo(dominio, rango, null);
-        int pos = dominio.getClave() % primo;
+        int pos = dominio.hashCode() % primo;
         NodoHashMapeo bucket = tabla[pos];
+        //revisa que el bucket no este vacio
         if (bucket != null) {
-            while (bucket.getEnlace() != null) {
-                if (bucket.getDominio().toString().equals(dominio.toString())) {
+            //revisa que el bucket siempre tenga un enlace para no perder la referencia
+            while (bucket.getEnlace() != null && !exito) {
+                //si el bucket es igual al elemento, agrega el rango al bucket
+                if (bucket.equals(elemento)) {
                     bucket.agregarRango(rango);
                     exito = true;
-                    break;
                 }
                 bucket = bucket.getEnlace();
             }
+            /*
+            * si no se pudo agregar el rango al bucket, quiere decir que o
+            * el bucket es igual al ultimo enlace o no hay un bucket igual al elemento
+            * por lo que se debe agregar como un nuevo bucket
+            */
             if (!exito) {
-                if (bucket.getDominio().toString().equals(dominio.toString())) {
+                if (bucket.equals(elemento)) {
                     bucket.agregarRango(rango);
                 }else{
                     bucket.setEnlace(elemento);
@@ -75,14 +82,17 @@ public class TablaHash {
      * @param dominio un objeto de tipo Dominio
      * @return un objeto de tipo Lista con los rangos asociados al dominio
      */
-    public Lista obtenerValor(Dominio dominio){
+    //TODO: CAMBIAR A OBJECT Y TEST
+    public Lista obtenerValor(Object dominio){
         Lista lista = new Lista();
-        int pos = dominio.getClave() % primo;
+        int pos = dominio.hashCode() % primo;
+        NodoHashMapeo elemento = new NodoHashMapeo(dominio, null, null);
         NodoHashMapeo bucket = tabla[pos];
-        while (bucket != null) {
-            if (bucket.getDominio().equals(dominio)) {
+        boolean encontrado = false;
+        while (bucket != null && !encontrado) {
+            if (bucket.equals(elemento)) {
                 lista = bucket.getRango();
-                break;
+                encontrado = true;
             }
             bucket = bucket.getEnlace();
         }
@@ -125,7 +135,7 @@ public class TablaHash {
         for (int i = 0; i < tamaño; i++) {
             if (tabla[i] != null) {
                 vacio = false;
-                break;
+                i = tamaño;
             }
         }
         return vacio;

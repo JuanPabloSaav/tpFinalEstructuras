@@ -6,8 +6,8 @@ import estructuras.lineales.Lista;
 
 import objetos.Ciudad;
 import objetos.Equipo;
-import objetos.Dominio;
-import objetos.Rango;
+import objetos.PartidoClave;
+import objetos.PartidoDatos;
 
 import logSystem.Log;
 import menu.menuPartidos;
@@ -44,35 +44,34 @@ public class mainSystem{
         Lista listaCiudades = ciudades.listarVertices();
         Lista listaPartidos = partidos.listar();
         Log.write("Equipos: ");
-        int longitud = listaEquipos.longitud();
-        for (int i = 1; i <= longitud; i++) {
+        while (!listaEquipos.esVacia()) {
             
-            Equipo equipo = (Equipo) listaEquipos.recuperar(i);
+            Equipo equipo = (Equipo) listaEquipos.recuperar(1);
             Log.write(equipo.getPais() 
             + ": Grupo: "+ equipo.getGrupo() 
             + " - Tecnico: "+ equipo.getApellidoTecnico() 
             + " - Goles a favor: " + Integer.toString(equipo.getGolesAFavor()) 
             + " - Goles en contra: " + Integer.toString(equipo.getGolesEnContra())
             + " - Puntos ganados: " + Integer.toString(equipo.getPuntosGanados()));
+            listaEquipos.eliminar(1);
         }
         Log.write("Ciudades: ");
-        longitud = listaCiudades.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(i);
+        while (!listaCiudades.esVacia()) {
+            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(1);
             Log.write(ciudad.getNombre() 
             + ": Alojamiento: "+ ciudad.getAlojamientoDisponible() 
             + " - Sede de Copa: "+ ciudad.getEsSede());
+            listaCiudades.eliminar(1);
         }
 
         Log.write("Partidos: ");
-        longitud = listaPartidos.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Object[] partido = (Object[]) listaPartidos.recuperar(i);
-            Dominio domPartido = (Dominio) partido[0];
+        while (!listaPartidos.esVacia()) {
+            Object[] partido = (Object[]) listaPartidos.recuperar(1);
+            PartidoClave domPartido = (PartidoClave) partido[0];
             Lista rangos = (Lista) partido[1];
             Log.write(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
             while (!rangos.esVacia()) {
-                Rango rango = (Rango) rangos.recuperar(1);
+                PartidoDatos rango = (PartidoDatos) rangos.recuperar(1);
                 Log.write("Ronda: "+ rango.getRonda() 
                 + " - Ciudad: "+ rango.getCiudad().getNombre() 
                 + " - Estadio: "+ rango.getNombreEstadio() 
@@ -80,6 +79,7 @@ public class mainSystem{
                 + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
                 rangos.eliminar(1);
             }
+            listaPartidos.eliminar(1);
         }
         Log.write("Estructuras cargadas exitosamente");
     }
@@ -299,8 +299,8 @@ public class mainSystem{
                             equipo2.setPuntosGanados(1+equipo2.getPuntosGanados());
                         }
                     }
-                    Dominio domPartido = new Dominio(equipo1, equipo2);
-                    Rango rango = new Rango(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
+                    PartidoClave domPartido = new PartidoClave(equipo1, equipo2);
+                    PartidoDatos rango = new PartidoDatos(((String)tempPartido[2]), ciudad, ((String)tempPartido[4]), golesEq1, golesEq2);
                     partidos.asociar(domPartido, rango);
                     Log.write("Partido añadido");
                 }
@@ -314,36 +314,35 @@ public class mainSystem{
     private static void mostrarEstructuras(Avl equipos, Grafo ciudades, TablaHash partidos){
         System.out.println("\nEquipos: ");
         Lista listaEquipos = equipos.listar();
-        int longitud = listaEquipos.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Equipo equipo = (Equipo) listaEquipos.recuperar(i);
+        while (!listaEquipos.esVacia()) {
+            Equipo equipo = (Equipo) listaEquipos.recuperar(1);
             System.out.println(equipo.getPais() 
             + ": Grupo: "+ equipo.getGrupo() 
             + " - Tecnico: "+ equipo.getApellidoTecnico() 
             + " - Goles a favor: " + Integer.toString(equipo.getGolesAFavor()) 
             + " - Goles en contra: " + Integer.toString(equipo.getGolesEnContra())
             + " - Puntos ganados: " + Integer.toString(equipo.getPuntosGanados()));
+            listaEquipos.eliminar(1);
         }
         System.out.println("\nCiudades: ");
         Lista listaCiudades = ciudades.listarVertices();
-        longitud = listaCiudades.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(i);
+        while (!listaCiudades.esVacia()) {
+            Ciudad ciudad = (Ciudad) listaCiudades.recuperar(1);
             System.out.println(ciudad.getNombre() 
             + ": Alojamiento: "+ ciudad.getAlojamientoDisponible() 
             + " - Sede de Copa: "+ ciudad.getEsSede());
+            listaCiudades.eliminar(1);
         }
 
         System.out.println("\nPartidos: ");
         Lista listaPartidos = partidos.listar();
-        longitud = listaPartidos.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Object[] partido = (Object[]) listaPartidos.recuperar(i);
-            Dominio domPartido = (Dominio) partido[0];
+        while (!listaPartidos.esVacia()) {
+            Object[] partido = (Object[]) listaPartidos.recuperar(1);
+            PartidoClave domPartido = (PartidoClave) partido[0];
             Lista rangos = (Lista) partido[1];
             System.out.println(domPartido.getEq1().getPais() + " vs " + domPartido.getEq2().getPais());
             while (!rangos.esVacia()) {
-                Rango rango = (Rango) rangos.recuperar(1);
+                PartidoDatos rango = (PartidoDatos) rangos.recuperar(1);
                 System.out.println("Ronda: "+ rango.getRonda() 
                 + " - Ciudad: "+ rango.getCiudad().getNombre() 
                 + " - Estadio: "+ rango.getNombreEstadio() 
@@ -351,15 +350,16 @@ public class mainSystem{
                 + " - Goles Eq2: " + Integer.toString(rango.getGolesEq2()));
                 rangos.eliminar(1);
             }
+            listaPartidos.eliminar(1);
         }
-
+        System.out.println("\nRutas: ");
         Lista lista = ciudades.listarArcos();
-        longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Object[] arco = (Object[]) lista.recuperar(i);
+        while (!lista.esVacia()) {
+            Object[] arco = (Object[]) lista.recuperar(1);
             System.out.println("Origen: " + ((Ciudad) arco[0]).getNombre() 
             + " Destino: " + ((Ciudad) arco[1]).getNombre() 
             + " Tiempo: " + (double) arco[2]);
+            lista.eliminar(1);
         }
         System.out.println("");
     }

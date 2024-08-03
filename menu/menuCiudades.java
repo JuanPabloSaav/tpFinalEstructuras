@@ -72,7 +72,10 @@ public class menuCiudades {
                 case 11:
                     mostrarRutas(ciudades);
                     break;
+                case 0:
+                    break;
                 default:
+                    System.out.println("Opción inválida, intenta de nuevo");
                     break;
             }
         } while (opcion > 0);
@@ -172,7 +175,10 @@ public class menuCiudades {
                         }
 
                         break;
+                    case 0:
+                        break;
                     default:
+                        System.out.println("Opción inválida, intenta de nuevo");
                         break;
                 }
             } while (opcion > 0);
@@ -205,13 +211,12 @@ public class menuCiudades {
     public static Ciudad buscarCiudad(Grafo ciudades, String nombreCiudad){
         Ciudad ciudad = null;
         Lista lista = ciudades.listarVertices();
-        int longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Ciudad aux = (Ciudad) lista.recuperar(i);
+        while (!lista.esVacia() && ciudad == null) {
+            Ciudad aux = (Ciudad) lista.recuperar(1);
             if (aux.getNombre().equalsIgnoreCase(nombreCiudad)) {
                 ciudad = aux;
-                break;
             }
+            lista.eliminar(1);
         }
         return ciudad;
 
@@ -219,11 +224,11 @@ public class menuCiudades {
 
     public static void listarCiudades(Grafo ciudades){
         Lista lista = ciudades.listarVertices();
-        int longitud = lista.longitud();
-        if (longitud > 0) {
-            for (int i = 1; i <= longitud; i++) {
-                Ciudad ciudad = (Ciudad) lista.recuperar(i);
+        if (!lista.esVacia()) {
+            while (!lista.esVacia()) {
+                Ciudad ciudad = (Ciudad) lista.recuperar(1);
                 System.out.println(ciudad.getNombre());
+                lista.eliminar(1);
             }
         }else{
             System.out.println("No hay ciudades registradas");
@@ -239,28 +244,24 @@ public class menuCiudades {
             origen = buscarCiudad(ciudades, nombreOrigen);
             if (origen == null) {
                 System.out.println("La ciudad no existe");
-                break;
             }else{
                 System.out.println("Ingrese la ciudad de destino");
                 String nombreDestino = solicitarCiudad();
                 destino = buscarCiudad(ciudades, nombreDestino);
                 if (destino == null) {
                     System.out.println("La ciudad no existe");
-                    break;
                 }else{
                     camino = ciudades.caminoMasCorto(origen, destino);
                 }
             }
         } while (origen == null && destino == null);
-        int longitud = camino.longitud();
-        if (longitud > 0) {
+        if (!camino.esVacia()) {
             System.out.println("El camino más corto es:");
-            for (int i = 1; i < longitud; i++) {
-                Ciudad ciudad = (Ciudad) camino.recuperar(i);
-                System.out.print(ciudad.getNombre().toUpperCase() + " -> ");
+            while (!camino.esVacia()) {
+                Ciudad ciudad = (Ciudad) camino.recuperar(1);
+                camino.eliminar(1);
+                System.out.print(ciudad.getNombre().toUpperCase() + (camino.esVacia()? "": " -> "));
             }
-            Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
-            System.out.println(ciudad.getNombre().toUpperCase());
         }else{
             System.out.println("No se encontró un camino");
         }
@@ -275,15 +276,13 @@ public class menuCiudades {
         Ciudad destino = buscarCiudad(ciudades, nombreDestino);
         if (origen != null && destino != null) {
             Lista camino = ciudades.caminoMenorTiempo(origen, destino);
-            int longitud = camino.longitud();
-            if (longitud > 0) {
+            if (!camino.esVacia()) {
                 System.out.println("El camino de menor tiempo es:");
-                for (int i = 1; i < longitud; i++) {
-                    Ciudad ciudad = (Ciudad) camino.recuperar(i);
-                    System.out.print(ciudad.getNombre().toUpperCase() + " -> ");
+                while (!camino.esVacia()) {
+                    Ciudad ciudad = (Ciudad) camino.recuperar(1);
+                    camino.eliminar(1);
+                    System.out.print(ciudad.getNombre().toUpperCase() + (camino.esVacia()? "": " -> "));
                 }
-                Ciudad ciudad = (Ciudad) camino.recuperar(longitud);
-                System.out.println(ciudad.getNombre().toUpperCase());
             }else{
                 System.out.println("No se encontró un camino");
             }
@@ -354,8 +353,8 @@ public class menuCiudades {
             double tiempo = 0;
             do {
                 System.out.println("1. Modificar tiempo de viaje");
-                System.out.println("2. Modificar destino"); // Al final no era necesario pero bueno.
-                System.out.println("0. Salir");
+                System.out.println("2. Salir");
+                // removido la modificacion de destino y origen ya que al final no se pedia 
                 try {
                     opcion = sc.nextInt();
                     if (sc.hasNextLine()) {
@@ -373,13 +372,11 @@ public class menuCiudades {
                     case 1:
                         System.out.println("Ingrese el nuevo tiempo de viaje");
                         tiempo = solicitarTiempo();
-                        if (ciudades.eliminarArco(ciudadOrigen, ciudadDestino)) {
-                            System.out.println(ciudades.insertarArco(ciudadOrigen, ciudadDestino, tiempo)?
-                            "El tiempo de viaje se modificó correctamente":"No se pudo modificar el tiempo de viaje");
-                        }
+                        System.out.println(ciudades.modificarEtiqueta(ciudadOrigen, ciudadDestino, tiempo)? 
+                        "El tiempo de viaje se modificó correctamente":"No se pudo modificar el tiempo de viaje");
                         break;
                     case 2:
-                        System.out.println("Ingrese la nueva ciudad de destino");
+                        /* System.out.println("Ingrese la nueva ciudad de destino");
                         String nuevoDestino = solicitarCiudad();
                         Ciudad nuevaCiudadDestino = buscarCiudad(ciudades, nuevoDestino);
                         if (nuevaCiudadDestino != null) {
@@ -393,12 +390,13 @@ public class menuCiudades {
                             }
                         }else{
                             System.out.println("La ciudad no existe");
-                        }
+                        } */
                         break;
                     default:
+                        System.out.println("Opción inválida, intenta de nuevo");
                         break;
                 }
-            } while (opcion > 0);
+            } while (opcion > 0 && opcion < 2);
         }else{
             if (ciudadOrigen == null) {
                 System.out.println("La ciudad de origen no existe");
@@ -477,13 +475,13 @@ public class menuCiudades {
 
     public static void mostrarRutas(Grafo ciudades){
         Lista lista = ciudades.listarArcos();
-        int longitud = lista.longitud();
-        if (longitud > 0) {
-            for (int i = 1; i <= longitud; i++) {
-                Object[] arco = (Object[]) lista.recuperar(i);
+        if (!lista.esVacia()) {
+            while (!lista.esVacia()) {
+                Object[] arco = (Object[]) lista.recuperar(1);
                 System.out.println("Origen: " + ((Ciudad) arco[0]).getNombre().toUpperCase() 
                 + " Destino: " + ((Ciudad) arco[1]).getNombre().toUpperCase()
                 + " Tiempo: " + (double) arco[2]);
+                lista.eliminar(1);
             }
         }else{
             System.out.println("No hay rutas registradas");

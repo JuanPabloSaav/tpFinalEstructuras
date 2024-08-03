@@ -76,13 +76,14 @@ public class menuEquipos {
 
         if (!nombrePais.equals("")) {
             lista = arbolEquipos.listar();
-            int longitud = lista.longitud();
-            for (int i = 1; i <= longitud; i++) {
-                Equipo equipo = (Equipo) lista.recuperar(i);
+            boolean encontrado = false;
+            while (!lista.esVacia() && !encontrado) {
+                Equipo equipo = (Equipo) lista.recuperar(1);
                 if (equipo.getPais().equals(nombrePais)) {
                     eq = equipo;
-                    break;
+                    encontrado = true;
                 }
+                lista.eliminar(1);
             }
 
         }
@@ -93,10 +94,16 @@ public class menuEquipos {
     private static void solicitarEquipo(Avl arbolEquipos) {
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
-        System.out.println("\nEquipo " + equipo.getPais().toUpperCase() + " encontrado:");
-        System.out.println("Puntos ganados: " + equipo.getPuntosGanados() +
+        if (equipo != null) {
+            System.out.println("\nEquipo " + equipo.getPais().toUpperCase() + " encontrado:");
+            System.out.println("Puntos ganados: " + equipo.getPuntosGanados() +
                 "\nGoles a favor: " + equipo.getGolesAFavor() +
-                "\nGoles en contra: " + equipo.getGolesEnContra());
+                "\nGoles en contra: " + equipo.getGolesEnContra() + 
+                "\nApellido del tecnico: " + equipo.getApellidoTecnico().toUpperCase() + 
+                "\nGrupo: " + equipo.getGrupo().toUpperCase());
+        }else{
+            System.out.println("No se encontro el equipo");
+        }
     }
 
     private static void buscarPorRango(Avl arbolEquipos) {
@@ -112,22 +119,22 @@ public class menuEquipos {
         eq2 = buscarEquipo(pais2, arbolEquipos);
 
         Lista lista = arbolEquipos.listarRango(eq1, eq2);
-        int longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Equipo equipo = (Equipo) lista.recuperar(i);
+        while (!lista.esVacia()) {
+            Equipo equipo = (Equipo) lista.recuperar(1);
             System.out.println("\nEquipo: " + equipo.getPais().toUpperCase() + "\n" +
                     "Puntos ganados: " + equipo.getPuntosGanados() + "\n" +
                     "Goles a favor: " + equipo.getGolesAFavor() + "\n" +
                     "Goles en contra: " + equipo.getGolesEnContra());
+            lista.eliminar(1);
         }
     }
 
     private static void mostrarEquipos(Avl arbolEquipos) {
         Lista lista = arbolEquipos.listar();
-        int longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            Equipo equipo = (Equipo) lista.recuperar(i);
+        while (!lista.esVacia()) {
+            Equipo equipo = (Equipo) lista.recuperar(1);
             System.out.println("Equipo: " + equipo.getPais().toUpperCase());
+            lista.eliminar(1);
         }
     }
 
@@ -143,6 +150,7 @@ public class menuEquipos {
     }
 
     private static void modificarEquipo(Avl arbolEquipos) {
+        System.out.println("Ingrese el pais del equipo a modificar");
         String pais = solicitarPais();
         Equipo equipo = buscarEquipo(pais, arbolEquipos);
         if (equipo != null) {
@@ -219,19 +227,21 @@ public class menuEquipos {
         }
     }
 
+    //TODO: TEST
     private static void mostrarEquiposOrdenadosPorGoles(Avl arbolEquipos) {
         Lista lista = arbolEquipos.listar();
         Avl arbolGoles = new Avl();
-        int longitud = lista.longitud();
-        for (int i = 1; i <= longitud; i++) {
-            EquipoGoles equipo = new EquipoGoles(((Equipo) lista.recuperar(i)).getPais(), ((Equipo) lista.recuperar(i)).getGolesAFavor());
+        while (!lista.esVacia()) {
+            Equipo temp = (Equipo) lista.recuperar(1);
+            EquipoGoles equipo = new EquipoGoles(temp.getPais(), temp.getGolesAFavor());
             arbolGoles.insertar(equipo);
+            lista.eliminar(1);
         }
         lista = arbolGoles.listar();
-        longitud = lista.longitud();
-        for (int i = longitud; i >= 1; i--) {
-            EquipoGoles equipo = (EquipoGoles) lista.recuperar(i);
+        while(!lista.esVacia()) {
+            EquipoGoles equipo = (EquipoGoles) lista.recuperar(1);
             System.out.println("Equipo: " + equipo.toString());
+            lista.eliminar(1);
         }
     }
 
